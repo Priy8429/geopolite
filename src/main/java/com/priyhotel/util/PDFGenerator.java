@@ -3,7 +3,6 @@ package com.priyhotel.util;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.priyhotel.entity.Booking;
@@ -75,8 +74,8 @@ public class PDFGenerator {
             document.add(table);
 
             if(Objects.nonNull(payment)){
-                Font subTitleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-                Paragraph paymentTitle = new Paragraph("Payment details", titleFont);
+                Font subTitleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                Paragraph paymentTitle = new Paragraph("Payment details", subTitleFont);
                 document.add(paymentTitle);
 
                 PdfPTable paymentTable = new PdfPTable(2);
@@ -115,7 +114,7 @@ public class PDFGenerator {
                 table.addCell(String.valueOf(room.getNoOfNights()));
             }
 
-            document.add(table);
+            document.add(roomTable);
 
             // Footer
             document.add(new Paragraph("\n\nThank you for choosing Hotel Pride!", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));

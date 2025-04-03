@@ -1,5 +1,6 @@
 package com.priyhotel.service;
 
+import com.priyhotel.dto.BookingRequestQueryDto;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Payment;
 import com.priyhotel.entity.User;
@@ -13,6 +14,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -113,7 +116,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            String tempEmail = "waqarmohd99@gmail.com";
+            String tempEmail = "princevishwakarma510@gmail.com";
             helper.setTo(tempEmail);
             helper.setSubject(subject);
             helper.setText(content, true);
@@ -123,5 +126,36 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new RuntimeException("Error sending email: " + e.getMessage());
         }
+    }
+
+    public void sendBookingRequestEmail(String name, String email,  String content){
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            String tempEmail = "princevishwakarma510@gmail.com";
+            helper.setTo(tempEmail);
+            helper.setSubject("Booking request from "+name);
+            helper.setText(content, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error sending email: " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendBookingQueryMailToHotelOwner(String email, BookingRequestQueryDto request) {
+        // Construct the email body
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = sdf.format(new Date());
+        String content = "<h2>Booking request raised by  " + request.getFullName() + ",</h2>" +
+                "<p>Here are the booking details</p>" +
+                "<p><strong>Customer name:</strong> " + request.getFullName() + "</p>" +
+                "<p><strong>Customer email:</strong> " + request.getEmail() + "</p>" +
+                "<p><strong>Customer phone:</strong> " + request.getPhoneNumber() + "</p>" +
+                "<p><strong>No of guests:</strong> " + request.getNoOfGuests() + "</p>" +
+                "<p><strong>No of rooms:</strong> " + request.getNoOfRooms() + "</p>" +
+                "<p><strong>Request date:</strong> " + formattedDate + "</p>" +
+                "<br>";
+        this.sendBookingRequestEmail(request.getFullName(), email, content);
     }
 }

@@ -47,6 +47,10 @@ public class HotelService {
         return hotelRepository.findByLocation(location);
     }
 
+    public Hotel getReferenceById(Long id){
+        return hotelRepository.getReferenceById(id);
+    }
+
     public Hotel addHotel(HotelRequestDto hotelRequestDto) {
 
         Location location = locationService.getLocationById(hotelRequestDto.getLocationId());

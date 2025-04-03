@@ -1,5 +1,6 @@
 package com.priyhotel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -42,10 +43,6 @@ public class RoomType {
     @JsonIgnore
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Room> rooms;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roomTypes") // Reference to 'roomTypes' in Hotel entity
-    private List<Hotel> hotels;
 
     @ManyToMany
     @JoinTable(

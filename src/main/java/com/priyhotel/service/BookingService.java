@@ -3,6 +3,7 @@ package com.priyhotel.service;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.dto.BookingRequestDto;
+import com.priyhotel.dto.BookingRequestQueryDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
@@ -180,4 +181,9 @@ public class BookingService {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10).toUpperCase();
     }
 
+    public String createBookingRequest(BookingRequestQueryDto bookingRequestQueryDto) {
+        Hotel hotel = hotelService.getHotelById(bookingRequestQueryDto.getHotelId());
+        emailService.sendBookingQueryMailToHotelOwner(hotel.getEmail(), bookingRequestQueryDto);
+        return "Your request has been sent successfully!";
+    }
 }

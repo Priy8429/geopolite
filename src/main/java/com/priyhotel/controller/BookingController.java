@@ -1,6 +1,7 @@
 package com.priyhotel.controller;
 
 import com.priyhotel.dto.BookingRequestDto;
+import com.priyhotel.dto.BookingRequestQueryDto;
 import com.priyhotel.dto.DefaultErrorResponse;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.service.BookingService;
@@ -50,5 +51,10 @@ public class BookingController {
     @PutMapping("/{id}/cancel")
     public ResponseEntity<Booking> cancelBooking(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.cancelBooking(id));
+    }
+
+    @PostMapping("/request")
+    public ResponseEntity<?> createBookingRequest(@RequestBody BookingRequestQueryDto bookingRequestQueryDto){
+        return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestQueryDto));
     }
 }

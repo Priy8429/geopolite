@@ -1,5 +1,6 @@
 package com.priyhotel.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -34,6 +35,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "hotel_room_types", // Join table name
