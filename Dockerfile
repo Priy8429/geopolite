@@ -19,8 +19,8 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 # Run as non-root user for security
-RUN useradd -m appuser && chown -R appuser /app
-USER appuser
+# RUN useradd -m appuser && chown -R appuser /app
+# USER appuser
 
 # Expose the default Spring Boot port
 EXPOSE 8080
