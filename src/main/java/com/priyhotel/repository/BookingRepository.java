@@ -2,6 +2,8 @@ package com.priyhotel.repository;
 
 import com.priyhotel.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -19,4 +21,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByHotelIdAndCheckInDateBetweenOrCheckOutDateBetween(
             Long roomId, LocalDate checkInStart, LocalDate checkInEnd, LocalDate checkOutStart, LocalDate checkOutEnd
     );
+
+    @Query("SELECT DISTINCT rb.room.roomNumber FROM Booking b " +
+            "JOIN b.bookedRooms rb " +
+            "WHERE b.hotel.id = :hotelId " +
+            "AND (:checkInDate BETWEEN b.checkInDate AND b.checkOutDate " +
+            "   OR :checkOutDate BETWEEN b.checkInDate AND b.checkOutDate)")
+    List<String> findBookedRoomNumbers(
+            @Param("hotelId") Long hotelId,
+            @Param("checkInDate") LocalDate checkInDate,
+            @Param("checkOutDate") LocalDate checkOutDate);
+
+
 }

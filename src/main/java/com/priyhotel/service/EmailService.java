@@ -116,6 +116,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            //            String tempEmail = "waqarmohd99@gmail.com";
             String tempEmail = "princevishwakarma510@gmail.com";
             helper.setTo(tempEmail);
             helper.setSubject(subject);
@@ -132,6 +133,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+//            String tempEmail = "waqarmohd99@gmail.com";
             String tempEmail = "princevishwakarma510@gmail.com";
             helper.setTo(tempEmail);
             helper.setSubject("Booking request from "+name);

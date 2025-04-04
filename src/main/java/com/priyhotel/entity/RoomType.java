@@ -40,9 +40,9 @@ public class RoomType {
     )
     private List<Amenity> amenities;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Room> rooms;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    private List<Room> rooms;
 
     @ManyToMany
     @JoinTable(

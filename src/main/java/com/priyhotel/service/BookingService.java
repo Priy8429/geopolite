@@ -57,16 +57,9 @@ public class BookingService {
                     roomTypeToQuantityMap.merge(roomBooking.getRoomTypeId(), 1, Integer::sum);
                 });
 
-        // get the already booked room numbers for the particular dates
-        List<String> alreadyBookedRooms = bookingRepository.findByHotelIdAndCheckInDateBetweenOrCheckOutDateBetween(
-                bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(),
-                bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate()
-        )
-                .stream().flatMap(booking -> booking.getBookedRooms().stream())
-                .map(roomBooking -> roomBooking.getRoom().getRoomNumber())
-                .toList();
+        List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotel.getId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
 
-        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto.getHotelId(), roomTypeToQuantityMap, alreadyBookedRooms);
+        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto.getHotelId(), roomTypeToQuantityMap, alreadyBookedRoomNumbers);
 
         if(availableRooms.isEmpty() || availableRooms.size() != bookingRequestDto.getRoomBookingList().size()){
             throw new BadRequestException("Room/s not available!");

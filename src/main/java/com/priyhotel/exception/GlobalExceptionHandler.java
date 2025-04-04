@@ -38,16 +38,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(InternalServerError.class)
-    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = DefaultErrorResponse.class)))
-    public ResponseEntity<DefaultErrorResponse> handleInternalServerError(InternalServerError ex){
-        logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
-        DefaultErrorResponse response = DefaultErrorResponse.builder()
-                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(ex.getMessage())
-                .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
+//    @ExceptionHandler(InternalServerError.class)
+//    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = DefaultErrorResponse.class)))
+//    public ResponseEntity<DefaultErrorResponse> handleInternalServerError(InternalServerError ex){
+//        logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+//        DefaultErrorResponse response = DefaultErrorResponse.builder()
+//                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                .message(ex.getMessage())
+//                .build();
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//    }
 
     @ExceptionHandler(UserAlreadyRegisteredException.class)
     @ApiResponse(responseCode = "409", description = "User already registered", content = @Content(schema = @Schema(implementation = DefaultErrorResponse.class)))
