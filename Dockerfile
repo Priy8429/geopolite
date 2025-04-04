@@ -7,8 +7,8 @@
 #COPY src ./src
 
 # Download dependencies and build the app (cache dependencies in a separate layer)
-RUN #mvn dependency:go-offline -B
-RUN #mvn clean package -DskipTests
+#RUN #mvn dependency:go-offline -B
+#RUN #mvn clean package -DskipTests
 
 # Stage 2: Runtime with JRE (smaller image)
 FROM eclipse-temurin:17-jre-jammy
