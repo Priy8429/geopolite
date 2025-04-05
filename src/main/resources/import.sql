@@ -54,3 +54,4 @@ INSERT INTO hotel_room_types(hotel_id, room_type_id) VALUES (1, 3);
 --room
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (1, 1, '101', 1, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (2, 1, '102', 1, 1);
+
