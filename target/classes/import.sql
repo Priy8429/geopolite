@@ -9,10 +9,13 @@ INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) 
 INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (8, 'Larger room size', null, 'Larger room size');
 INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (9, 'Working desk', null, 'Working desk');
 
+ALTER TABLE amenities ALTER COLUMN id RESTART WITH 10;
 --room types
 INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (1, 'Non-AC Room', 'Comfortable and functional, ideal for a simple and bidget-friendly stay.', 2, 1, 1200, null);
 INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (2, 'Deluxe Room', 'Thoughtfully designed with added comfort and convenience for a relaxing experience.', 2, 1, 1500, null);
 INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (3, 'Executive Room', 'Spacious and well-equipped, perfect for business travelers seeking extra comfort and functionality.', 2, 1, 1800, null);
+
+ALTER TABLE room_types ALTER COLUMN id RESTART WITH 4;
 
 --room type amenities
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (1, 1);
@@ -40,11 +43,17 @@ INSERT INTO users(id, name, email, password, contact_number, role) VALUES (1, 'a
 --password is 'admin'
 INSERT INTO users(id, name, email, password, contact_number, role) VALUES (2, 'testuser', 'testuser@gmail.com', '', '1234567891', 'USER');
 
+ALTER TABLE users ALTER COLUMN id RESTART WITH 3;
+
 --location
 INSERT INTO locations(id, city, state, country) VALUES (1, 'Mumbai', 'Maharashtra', 'India');
 
+ALTER TABLE locations ALTER COLUMN id RESTART WITH 2;
+
 --hotel
 INSERT INTO hotels(id, location_id, name, email, contact_number, address) VALUES (1, 1, 'Hotel Pride', '', '9819914047', 'Hotel Pride, Lbs Marg, Rs, Dreams Mall Rd, next to icici bank, Bhandup West, Mumbai, Maharashtra 400078');
+
+ALTER TABLE hotels ALTER COLUMN id RESTART WITH 2;
 
 --hotel room types
 INSERT INTO hotel_room_types(hotel_id, room_type_id) VALUES (1, 1);
@@ -55,3 +64,4 @@ INSERT INTO hotel_room_types(hotel_id, room_type_id) VALUES (1, 3);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (1, 1, '101', 1, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (2, 1, '102', 1, 1);
 
+ALTER TABLE rooms ALTER COLUMN id RESTART WITH 3;
