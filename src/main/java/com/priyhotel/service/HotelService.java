@@ -101,4 +101,5 @@ public class HotelService {
         Hotel hotel = this.getHotelById(hotelId);
         return hotel.getRoomTypes();
     }
+
 }

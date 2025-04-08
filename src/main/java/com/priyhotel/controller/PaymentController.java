@@ -1,5 +1,6 @@
 package com.priyhotel.controller;
 
+import com.priyhotel.dto.PaymentVerifyRequestDto;
 import com.priyhotel.service.PaymentService;
 import com.razorpay.RazorpayException;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,8 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyPayment(
-            @RequestParam String paymentId,
-            @RequestParam String orderId,
-            @RequestParam String signature) {
-        boolean isVerified = paymentService.verifyAndSavePayment(paymentId, orderId, signature);
+    public ResponseEntity<String> verifyPayment(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto) {
+        boolean isVerified = paymentService.verifyAndSavePayment(paymentVerifyRequestDto);
 
         if (isVerified) {
             return ResponseEntity.ok("Payment verified successfully.");

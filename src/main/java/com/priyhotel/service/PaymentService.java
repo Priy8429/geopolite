@@ -1,6 +1,7 @@
 package com.priyhotel.service;
 
 import com.itextpdf.text.pdf.PdfPTable;
+import com.priyhotel.dto.PaymentVerifyRequestDto;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
 import com.priyhotel.exception.ResourceNotFoundException;
@@ -79,16 +80,16 @@ public class PaymentService {
     }
 
     // Verify and Save Payment
-    public boolean verifyAndSavePayment(String paymentId, String orderId, String signature) {
+    public boolean verifyAndSavePayment(PaymentVerifyRequestDto paymentVerifyRequestDto) {
         try {
-            String payload = orderId + "|" + paymentId;
+            String payload = paymentVerifyRequestDto.getOrderId() + "|" + paymentVerifyRequestDto.getPaymentId();
             String generatedSignature = HmacSHA256(payload, apiSecret);
 
 //            if (generatedSignature.equals(signature)) {
-                Payment payment = paymentRepository.findByRazorpayOrderId(orderId)
+                Payment payment = paymentRepository.findByRazorpayOrderId(paymentVerifyRequestDto.getOrderId())
                         .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
-                payment.setRazorpayPaymentId(paymentId);
+                payment.setRazorpayPaymentId(paymentVerifyRequestDto.getPaymentId());
                 payment.setStatus("SUCCESS");
                 payment.setPaymentDate(LocalDateTime.now());
                 paymentRepository.save(payment);

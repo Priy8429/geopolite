@@ -22,15 +22,26 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             Long roomId, LocalDate checkInStart, LocalDate checkInEnd, LocalDate checkOutStart, LocalDate checkOutEnd
     );
 
+//    @Query("SELECT DISTINCT rb.room.roomNumber FROM Booking b " +
+//            "JOIN b.bookedRooms rb " +
+//            "WHERE b.hotel.id = :hotelId " +
+//            "AND (:checkInDate BETWEEN b.checkInDate AND b.checkOutDate " +
+//            "   OR :checkOutDate BETWEEN b.checkInDate AND b.checkOutDate)")
+//    List<String> findBookedRoomNumbers(
+//            @Param("hotelId") Long hotelId,
+//            @Param("checkInDate") LocalDate checkInDate,
+//            @Param("checkOutDate") LocalDate checkOutDate);
+
     @Query("SELECT DISTINCT rb.room.roomNumber FROM Booking b " +
             "JOIN b.bookedRooms rb " +
             "WHERE b.hotel.id = :hotelId " +
-            "AND (:checkInDate BETWEEN b.checkInDate AND b.checkOutDate " +
-            "   OR :checkOutDate BETWEEN b.checkInDate AND b.checkOutDate)")
-    List<String> findBookedRoomNumbers(
+            "AND (:checkInDate < b.checkOutDate AND :checkOutDate > b.checkInDate)")
+            List<String> findBookedRoomNumbers(
             @Param("hotelId") Long hotelId,
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate);
 
+    List<Booking> findByCheckInDate(LocalDate checkinDate);
 
+    List<Booking> findByCheckOutDate(LocalDate checkoutDate);
 }

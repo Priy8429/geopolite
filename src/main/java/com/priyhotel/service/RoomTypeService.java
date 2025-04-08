@@ -72,4 +72,5 @@ public class RoomTypeService {
         return roomTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Room type not found!"));
     }
+
 }

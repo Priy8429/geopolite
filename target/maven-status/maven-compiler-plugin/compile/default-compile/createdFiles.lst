@@ -16,16 +16,20 @@ com\priyhotel\service\RoomTypeService.class
 com\priyhotel\repository\CouponRepository.class
 com\priyhotel\controller\AuthController.class
 com\priyhotel\util\PDFGenerator.class
+com\priyhotel\mapper\BookingMapper.class
 com\priyhotel\mapper\RoomMapper.class
 com\priyhotel\controller\ReviewController.class
 com\priyhotel\repository\BookingRepository.class
 com\priyhotel\repository\HotelRepository.class
 com\priyhotel\entity\RoomBooking.class
 com\priyhotel\dto\BookingRequestDto.class
+com\priyhotel\mapper\UserMapper.class
 com\priyhotel\dto\DefaultErrorResponse$DefaultErrorResponseBuilder.class
 com\priyhotel\service\PaymentService.class
 com\priyhotel\dto\DefaultErrorResponse.class
+com\priyhotel\dto\PaymentVerifyRequestDto.class
 com\priyhotel\service\LocationService.class
+com\priyhotel\dto\BookingDto.class
 com\priyhotel\mapper\HotelMapper.class
 com\priyhotel\entity\Location.class
 com\priyhotel\config\SecurityConfig.class
@@ -59,6 +63,8 @@ com\priyhotel\entity\Hotel.class
 com\priyhotel\dto\RoomBookingDto.class
 com\priyhotel\repository\AssetRepository.class
 com\priyhotel\constants\Constants.class
+com\priyhotel\dto\UserDto.class
+com\priyhotel\dto\BookingDto$BookingDtoBuilder.class
 com\priyhotel\entity\Booking.class
 com\priyhotel\entity\Room.class
 com\priyhotel\service\CouponService.class
@@ -75,4 +81,5 @@ com\priyhotel\constants\Role.class
 com\priyhotel\dto\BookingRequestQueryDto.class
 com\priyhotel\dto\HotelRequestDto.class
 com\priyhotel\service\AuthService.class
+com\priyhotel\dto\UserDto$UserDtoBuilder.class
 com\priyhotel\constants\AssetType.class

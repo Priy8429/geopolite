@@ -27,4 +27,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             @Param("roomTypeId") Long roomTypeId,
             @Param("excludedRoomNumbers") List<String> excludedRoomNumbers,
             Pageable pageable);
+
+    @Query("SELECT r.roomType, COUNT(r) FROM Room r " +
+            "WHERE r.hotel.id = :hotelId " +
+            "AND r.roomNumber NOT IN :excludedRoomNumbers " +
+            "GROUP BY r.roomType")
+    List<Object[]> countAvailableRoomsGroupedByType(
+            @Param("hotelId") Long hotelId,
+            @Param("excludedRoomNumbers") List<String> excludedRoomNumbers);
 }

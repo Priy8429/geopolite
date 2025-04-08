@@ -2,11 +2,13 @@ package com.priyhotel.service;
 
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.dto.BookingDto;
 import com.priyhotel.dto.BookingRequestDto;
 import com.priyhotel.dto.BookingRequestQueryDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
+import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.repository.BookingRepository;
 import com.priyhotel.repository.RoomBookingRepository;
 import jakarta.transaction.Transactional;
@@ -44,8 +46,11 @@ public class BookingService {
     @Autowired
     private RoomTypeService roomTypeService;
 
+    @Autowired
+    private BookingMapper bookingMapper;
+
     @Transactional
-    public Booking createBooking(BookingRequestDto bookingRequestDto) {
+    public BookingDto createBooking(BookingRequestDto bookingRequestDto) {
 
         User user = authService.getUserById(bookingRequestDto.getUserId());
         Hotel hotel = hotelService.getHotelById(bookingRequestDto.getHotelId());
@@ -132,7 +137,7 @@ public class BookingService {
             emailService.sendPaymentConfirmationEmailToOwner(booking, null);
         }
 
-        return savedBooking;
+        return bookingMapper.toDto(savedBooking);
     }
 
     public List<Booking> getUserBookings(Long userId) {
@@ -178,5 +183,29 @@ public class BookingService {
         Hotel hotel = hotelService.getHotelById(bookingRequestQueryDto.getHotelId());
         emailService.sendBookingQueryMailToHotelOwner(hotel.getEmail(), bookingRequestQueryDto);
         return "Your request has been sent successfully!";
+    }
+
+    public Map<String, Long> getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
+        List<RoomType> roomTypes = hotelService.getHotelById(hotelId).getRoomTypes();
+        List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
+        Map<String, Long> roomsMap = roomService.findAvailableRoomsCountForRoomTypes(hotelId, alreadyBookedRoomNumbers);
+        roomTypes.forEach(roomType -> {
+            if(!roomsMap.containsKey(roomType.getTypeName())){
+                roomsMap.put(roomType.getTypeName(), 0L);
+            }
+        });
+        return roomsMap;
+    }
+
+    public List<BookingDto> getUserCheckinsByDate(LocalDate checkinDate) {
+        List<Booking> bookings = bookingRepository.findByCheckInDate(checkinDate);
+        return bookingMapper.toDtos(bookings);
+
+    }
+
+    public List<BookingDto> getUserCheckoutsByDate(LocalDate checkoutDate) {
+        List<Booking> bookings = bookingRepository.findByCheckOutDate(checkoutDate);
+        return bookingMapper.toDtos(bookings);
+
     }
 }

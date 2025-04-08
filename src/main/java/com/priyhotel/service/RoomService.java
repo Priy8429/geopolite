@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,5 +87,16 @@ public class RoomService {
             availableRooms.addAll(foundRooms);
         });
         return availableRooms;
+    }
+
+    public Map<String, Long> findAvailableRoomsCountForRoomTypes(Long hotelId, List<String> alreadyBookedRoomNumbers) {
+        List<Object[]> results = roomRepository.countAvailableRoomsGroupedByType(hotelId, alreadyBookedRoomNumbers);
+        Map<String, Long> roomTypeCounts = new HashMap<>();
+        for(Object[] result: results){
+            RoomType roomType = (RoomType) result[0];
+            Long count = (Long) result[1];
+            roomTypeCounts.put(roomType.getTypeName(), count);
+        }
+        return roomTypeCounts;
     }
 }

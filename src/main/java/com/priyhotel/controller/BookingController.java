@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -56,5 +57,20 @@ public class BookingController {
     @PostMapping("/request")
     public ResponseEntity<?> createBookingRequest(@RequestBody BookingRequestQueryDto bookingRequestQueryDto){
         return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestQueryDto));
+    }
+
+    @GetMapping("availability")
+    public ResponseEntity<?> getRoomsAvailability(@RequestParam Long hotelId, @RequestParam LocalDate checkinDate, @RequestParam LocalDate checkoutDate){
+        return ResponseEntity.ok(bookingService.getAvailableRoomsByDate(hotelId, checkinDate, checkoutDate));
+    }
+
+    @GetMapping("user-checkins")
+    public ResponseEntity<?> getUserCheckinByDate(@RequestParam LocalDate checkinDate){
+        return ResponseEntity.ok(bookingService.getUserCheckinsByDate(checkinDate));
+    }
+
+    @GetMapping("user-checkouts")
+    public ResponseEntity<?> getUserCheckoutsByDate(@RequestParam LocalDate checkoutDate){
+        return ResponseEntity.ok(bookingService.getUserCheckoutsByDate(checkoutDate));
     }
 }

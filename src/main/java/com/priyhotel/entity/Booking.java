@@ -33,7 +33,6 @@ public class Booking {
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

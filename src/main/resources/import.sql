@@ -61,8 +61,45 @@ INSERT INTO hotel_room_types(hotel_id, room_type_id) VALUES (1, 2);
 INSERT INTO hotel_room_types(hotel_id, room_type_id) VALUES (1, 3);
 
 --room
+--for room type 1
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (1, 1, '101', 1, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (2, 1, '102', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (3, 1, '103', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (4, 1, '104', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (5, 1, '105', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (6, 1, '106', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (7, 1, '107', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (8, 1, '108', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (9, 1, '109', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (10, 1, '110', 1, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (11, 1, '111', 1, 1);
+
+--for room type 2
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (12, 1, '201', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (13, 1, '202', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (14, 1, '203', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (15, 1, '204', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (16, 1, '205', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (17, 1, '206', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (18, 1, '207', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (19, 1, '208', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (20, 1, '209', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (21, 1, '210', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '211', 2, 1);
+
+--for room type 3
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (23, 1, '301', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (24, 1, '302', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (25, 1, '303', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (26, 1, '304', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (27, 1, '305', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (28, 1, '306', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (29, 1, '307', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (30, 1, '308', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (31, 1, '309', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (32, 1, '310', 3, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (33, 1, '311', 3, 1);
+
 
 ALTER TABLE rooms ALTER COLUMN id RESTART WITH 3;
 
