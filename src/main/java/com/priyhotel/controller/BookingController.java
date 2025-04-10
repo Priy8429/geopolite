@@ -8,6 +8,7 @@ import com.priyhotel.service.BookingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,17 +61,26 @@ public class BookingController {
     }
 
     @GetMapping("availability")
-    public ResponseEntity<?> getRoomsAvailability(@RequestParam Long hotelId, @RequestParam LocalDate checkinDate, @RequestParam LocalDate checkoutDate){
+    public ResponseEntity<?> getRoomsAvailability(@RequestParam Long hotelId,
+                                                  @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkinDate,
+                                                  @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkoutDate){
         return ResponseEntity.ok(bookingService.getAvailableRoomsByDate(hotelId, checkinDate, checkoutDate));
     }
 
     @GetMapping("user-checkins")
-    public ResponseEntity<?> getUserCheckinByDate(@RequestParam LocalDate checkinDate){
+    public ResponseEntity<?> getUserCheckinsByDate(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkinDate){
         return ResponseEntity.ok(bookingService.getUserCheckinsByDate(checkinDate));
     }
 
     @GetMapping("user-checkouts")
-    public ResponseEntity<?> getUserCheckoutsByDate(@RequestParam LocalDate checkoutDate){
+    public ResponseEntity<?> getUserCheckoutsByDate(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkoutDate){
         return ResponseEntity.ok(bookingService.getUserCheckoutsByDate(checkoutDate));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getBookingsByHotelDateRange(@RequestParam Long hotelId,
+                                                         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+                                                         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate){
+        return ResponseEntity.ok(bookingService.getBookingsByHotelAndDateRange(hotelId, startDate, endDate));
     }
 }

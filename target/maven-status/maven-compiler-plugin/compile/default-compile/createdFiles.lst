@@ -55,6 +55,7 @@ com\priyhotel\repository\LocationRepository.class
 com\priyhotel\exception\GlobalExceptionHandler.class
 com\priyhotel\repository\ReviewRepository.class
 com\priyhotel\dto\RoomRequestDto.class
+com\priyhotel\dto\UserRequestDto.class
 com\priyhotel\exception\ResourceNotFoundException.class
 com\priyhotel\repository\UserRepository.class
 com\priyhotel\repository\RoomRepository.class
@@ -80,6 +81,7 @@ com\priyhotel\controller\PaymentController.class
 com\priyhotel\constants\Role.class
 com\priyhotel\dto\BookingRequestQueryDto.class
 com\priyhotel\dto\HotelRequestDto.class
+com\priyhotel\dto\UserRequestDto$UserRequestDtoBuilder.class
 com\priyhotel\service\AuthService.class
 com\priyhotel\dto\UserDto$UserDtoBuilder.class
 com\priyhotel\constants\AssetType.class

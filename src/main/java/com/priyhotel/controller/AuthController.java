@@ -2,7 +2,9 @@ package com.priyhotel.controller;
 
 import com.priyhotel.dto.DefaultErrorResponse;
 import com.priyhotel.dto.LoginRequest;
+import com.priyhotel.dto.UserRequestDto;
 import com.priyhotel.entity.User;
+import com.priyhotel.mapper.UserMapper;
 import com.priyhotel.service.AuthService;
 import com.priyhotel.service.OtpService;
 import com.priyhotel.service.SmsService;
@@ -11,7 +13,10 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -27,6 +32,9 @@ public class AuthController {
 
     @Autowired
     SmsService smsService;
+
+    @Autowired
+    UserMapper userMapper;
 
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
@@ -58,7 +66,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user){
+    public ResponseEntity<?> register(@RequestBody UserRequestDto user){
+        User existingUser = authService.getUserByEmailOrPhone(user.getEmail(), user.getContactNumber());
+        if(Objects.nonNull(existingUser)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.CONFLICT.value()).message("User email/phone already registered!").build());
+        }
         return ResponseEntity.ok(authService.register(user));
     }
 

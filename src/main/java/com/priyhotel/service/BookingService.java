@@ -208,4 +208,17 @@ public class BookingService {
         return bookingMapper.toDtos(bookings);
 
     }
+
+    public List<BookingDto> getBookingsByHotelAndDateRange(Long hotelId, LocalDate startDate, LocalDate endDate) {
+        if(Objects.isNull(startDate)){
+            startDate = LocalDate.now();
+        }
+        if(Objects.isNull(endDate)){
+            endDate = LocalDate.now().plusMonths(6);
+        }
+
+        List<Booking> bookings = bookingRepository.findBookingsByHotelAndDateRange(hotelId, startDate, endDate);
+        return bookingMapper.toDtos(bookings);
+
+    }
 }

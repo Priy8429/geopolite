@@ -44,4 +44,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByCheckInDate(LocalDate checkinDate);
 
     List<Booking> findByCheckOutDate(LocalDate checkoutDate);
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.hotel.id = :hotelId " +
+            "AND (b.checkInDate <= :endDate AND b.checkOutDate >= :startDate) ORDER BY b.checkInDate ASC")
+    List<Booking> findBookingsByHotelAndDateRange(Long hotelId, LocalDate startDate, LocalDate endDate);
 }

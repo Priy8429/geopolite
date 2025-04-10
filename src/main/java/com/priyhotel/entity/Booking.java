@@ -6,6 +6,7 @@ import com.priyhotel.constants.PaymentType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,9 +39,11 @@ public class Booking {
     private User user;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate checkInDate;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate checkOutDate;
 
     @Column(nullable = false)
