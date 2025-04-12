@@ -78,9 +78,14 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getBookingsByHotelDateRange(@RequestParam Long hotelId,
+    public ResponseEntity<?> getBookingsByHotelAndDateRange(@RequestParam Long hotelId,
                                                          @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
                                                          @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate){
         return ResponseEntity.ok(bookingService.getBookingsByHotelAndDateRange(hotelId, startDate, endDate));
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<?> getOnwardBookings(@RequestParam Long hotelId){
+        return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId));
     }
 }

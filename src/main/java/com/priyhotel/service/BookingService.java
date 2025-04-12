@@ -55,16 +55,16 @@ public class BookingService {
         User user = authService.getUserById(bookingRequestDto.getUserId());
         Hotel hotel = hotelService.getHotelById(bookingRequestDto.getHotelId());
 
-        Map<Long, Integer> roomTypeToQuantityMap = new HashMap<>();
+//        Map<Long, Integer> roomTypeToQuantityMap = new HashMap<>();
         //getting the count of type of rooms required
-        bookingRequestDto.getRoomBookingList()
-                .forEach(roomBooking -> {
-                    roomTypeToQuantityMap.merge(roomBooking.getRoomTypeId(), 1, Integer::sum);
-                });
+//        bookingRequestDto.getRoomBookingList()
+//                .forEach(roomBooking -> {
+//                    roomTypeToQuantityMap.merge(roomBooking.getRoomTypeId(), 1, Integer::sum);
+//                });
 
         List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotel.getId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
 
-        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto.getHotelId(), roomTypeToQuantityMap, alreadyBookedRoomNumbers);
+        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto, alreadyBookedRoomNumbers);
 
         if(availableRooms.isEmpty() || availableRooms.size() != bookingRequestDto.getRoomBookingList().size()){
             throw new BadRequestException("Room/s not available!");
@@ -110,8 +110,6 @@ public class BookingService {
                 RoomBooking roomBooking = new RoomBooking();
                 roomBooking.setRoom(room);
                 roomBooking.setBooking(booking);
-                roomBooking.setNoOfAdults(roomBooking.getNoOfAdults());
-                roomBooking.setNoOfChilds(roomBookingDto.get().getNoOfChildrens());
                 roomBooking.setNoOfNights((int)(bookingRequestDto.getCheckOutDate().toEpochDay() - bookingRequestDto.getCheckInDate().toEpochDay()));
 
                 // add room to the final list
@@ -220,5 +218,10 @@ public class BookingService {
         List<Booking> bookings = bookingRepository.findBookingsByHotelAndDateRange(hotelId, startDate, endDate);
         return bookingMapper.toDtos(bookings);
 
+    }
+
+    public List<BookingDto> getOnwardBookings(Long hotelId) {
+        List<Booking> bookings = bookingRepository.findOnwardBookings(hotelId);
+        return bookingMapper.toDtos(bookings);
     }
 }

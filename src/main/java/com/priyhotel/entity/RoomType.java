@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,6 +28,17 @@ public class RoomType {
 
     @Column(nullable = true)
     private Double pricePerNight;
+
+    @Column(nullable = true)
+    private Double offerDiscountPercentage;
+
+    @Column(nullable = true)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate offerStartDate;
+
+    @Column(nullable = true)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate offerEndDate;
 
     @Column(nullable = true)
     private String description;

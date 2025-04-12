@@ -109,8 +109,8 @@ public class PDFGenerator {
             for (RoomBooking room : booking.getBookedRooms()) {
                 table.addCell(room.getRoom().getRoomNumber());
                 table.addCell(room.getRoom().getRoomType().getTypeName());
-                table.addCell(String.valueOf(room.getNoOfAdults()));
-                table.addCell(String.valueOf(room.getNoOfChilds()));
+//                table.addCell(String.valueOf(room.getNoOfAdults()));
+//                table.addCell(String.valueOf(room.getNoOfChilds()));
                 table.addCell(String.valueOf(room.getNoOfNights()));
             }
 

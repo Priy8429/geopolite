@@ -24,6 +24,8 @@ public class BookingMapper {
                 .couponCode(booking.getCouponCode())
                 .discountAmount(booking.getDiscountAmount())
                 .totalRooms(booking.getTotalRooms())
+                .noOfAdults(booking.getNoOfAdults())
+                .noOfChildrens(booking.getNoOfChildrens())
                 .bookedRooms(booking.getBookedRooms())
                 .paymentType(booking.getPaymentType())
                 .status(booking.getStatus())

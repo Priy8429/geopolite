@@ -26,6 +26,8 @@ public class BookingDto {
     private String couponCode;
     private Double discountAmount;
     private Integer totalRooms;
+    private Integer noOfAdults;
+    private Integer noOfChildrens;
     private List<RoomBooking> bookedRooms;
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED

@@ -6,6 +6,5 @@ import lombok.Data;
 public class RoomBookingDto {
 
     private Long roomTypeId;
-    private Integer noOfAdults;
-    private Integer noOfChildrens;
+    private Integer noOfRooms;
 }

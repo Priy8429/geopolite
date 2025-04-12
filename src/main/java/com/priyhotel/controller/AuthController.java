@@ -17,6 +17,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -67,23 +68,18 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto user){
-        User existingUser = authService.getUserByEmailOrPhone(user.getEmail(), user.getContactNumber());
-        if(Objects.nonNull(existingUser)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(DefaultErrorResponse.builder()
-                    .statusCode(HttpStatus.CONFLICT.value()).message("User email/phone already registered!").build());
-        }
         return ResponseEntity.ok(authService.register(user));
     }
 
-    @PutMapping("/user")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
-        try {
-            authService.updateUser(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found!");
-        }
-        return ResponseEntity.ok(user);
-    }
+//    @PutMapping("/user")
+//    public ResponseEntity<?> updateUser(@RequestBody User user){
+//        try {
+//            authService.updateUser(user);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found!");
+//        }
+//        return ResponseEntity.ok(user);
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){

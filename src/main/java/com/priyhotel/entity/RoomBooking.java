@@ -22,9 +22,9 @@ public class RoomBooking {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    private Integer noOfAdults;
-
-    private Integer noOfChilds;
+//    private Integer noOfAdults;
+//
+//    private Integer noOfChilds;
 
     private Integer noOfNights;
 }

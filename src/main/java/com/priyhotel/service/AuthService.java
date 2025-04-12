@@ -10,11 +10,11 @@ import com.priyhotel.mapper.UserMapper;
 import com.priyhotel.repository.UserRepository;
 import com.priyhotel.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -47,6 +47,12 @@ public class AuthService {
 //        }else{
 //            throw new RuntimeException("User not found!");
 //        }
+        Optional<User> userByEmail = userRepository.findByEmail(user.getEmail());
+        Optional<User> userByContactNumber = userRepository.findByContactNumber(user.getContactNumber());
+        if(userByContactNumber.isPresent() || userByEmail.isPresent()){
+            throw new BadRequestException("User email/phone already registered!");
+        }
+
         User newUser = new User();
         newUser.setName(user.getName());
         newUser.setEmail(user.getEmail());
@@ -57,12 +63,13 @@ public class AuthService {
         return userMapper.toDto(savedUser);
     }
 
-    public UserDto updateUser(User user){
-        User existingUser = this.getUserByEmailOrPhone(user.getEmail(), user.getContactNumber());
-        user.setId(existingUser.getId());
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
-    }
+//    public UserDto updateUser(User user){
+//        User existingUser = this.getUserByEmailOrPhone(user.getEmail(), user.getContactNumber())
+//                .orElseThrow(() ->new BadRequestException("User not found with the given email or phone"));
+//        user.setId(existingUser.getId());
+//        User savedUser = userRepository.save(user);
+//        return userMapper.toDto(savedUser);
+//    }
 
     public User getUserById(Long id){
         return userRepository.findById(id)
@@ -74,16 +81,19 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User with this contact number does not exist"));
     }
 
-    public User getUserByEmailOrPhone(String email, String phoneNumber){
-        return userRepository.findByEmailOrContactNumber(email, phoneNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with the given email or phone"));
+    public Optional<User> getUserByEmailOrPhone(String email, String phoneNumber){
+        return userRepository.findByEmailOrContactNumber(email, phoneNumber);
     }
 
-    public String login(String emailOrPhone, String password){
-        User user  = this.getUserByEmailOrPhone(emailOrPhone, emailOrPhone);
-        if(!passwordEncoder.matches(password, user.getPassword())){
+    public String login(String emailOrPhone, String password) {
+        User user = this.getUserByEmailOrPhone(emailOrPhone, emailOrPhone)
+                .orElseThrow(() -> new BadRequestException("User not found with the given email or phone"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadRequestException("Invalid phone or password");
         }
         return jwtUtil.generateToken(user);
+
     }
+
 }

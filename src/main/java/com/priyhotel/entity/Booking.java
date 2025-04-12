@@ -57,6 +57,10 @@ public class Booking {
 
     private Integer totalRooms;
 
+    private Integer noOfAdults;
+
+    private Integer noOfChildrens;
+
     @JsonIgnore
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoomBooking> bookedRooms;
