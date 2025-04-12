@@ -2,13 +2,11 @@ package com.priyhotel.service;
 
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
-import com.priyhotel.dto.BookingDto;
-import com.priyhotel.dto.BookingRequestDto;
-import com.priyhotel.dto.BookingRequestQueryDto;
-import com.priyhotel.dto.RoomBookingDto;
+import com.priyhotel.dto.*;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
 import com.priyhotel.mapper.BookingMapper;
+import com.priyhotel.mapper.RoomTypeMapper;
 import com.priyhotel.repository.BookingRepository;
 import com.priyhotel.repository.RoomBookingRepository;
 import jakarta.transaction.Transactional;
@@ -48,6 +46,9 @@ public class BookingService {
 
     @Autowired
     private BookingMapper bookingMapper;
+
+    @Autowired
+    private RoomTypeMapper roomTypeMapper;
 
     @Transactional
     public BookingDto createBooking(BookingRequestDto bookingRequestDto) {
@@ -183,16 +184,15 @@ public class BookingService {
         return "Your request has been sent successfully!";
     }
 
-    public Map<String, Long> getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
+    public List<RoomTypeAvailabilityResponse> getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
         List<RoomType> roomTypes = hotelService.getHotelById(hotelId).getRoomTypes();
+        List<RoomTypeAvailabilityResponse> rtDtos = roomTypeMapper.toRTAvailabilityDtos(roomTypes);
         List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
         Map<String, Long> roomsMap = roomService.findAvailableRoomsCountForRoomTypes(hotelId, alreadyBookedRoomNumbers);
-        roomTypes.forEach(roomType -> {
-            if(!roomsMap.containsKey(roomType.getTypeName())){
-                roomsMap.put(roomType.getTypeName(), 0L);
-            }
+        rtDtos.forEach(roomType -> {
+            roomType.setAvailableRoomsQty(roomsMap.getOrDefault(roomType.getTypeName(), 0L));
         });
-        return roomsMap;
+        return rtDtos;
     }
 
     public List<BookingDto> getUserCheckinsByDate(LocalDate checkinDate) {

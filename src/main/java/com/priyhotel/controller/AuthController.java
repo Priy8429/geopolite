@@ -3,6 +3,7 @@ package com.priyhotel.controller;
 import com.priyhotel.dto.DefaultErrorResponse;
 import com.priyhotel.dto.LoginRequest;
 import com.priyhotel.dto.UserRequestDto;
+import com.priyhotel.dto.UserResponseDto;
 import com.priyhotel.entity.User;
 import com.priyhotel.mapper.UserMapper;
 import com.priyhotel.service.AuthService;
@@ -82,7 +83,7 @@ public class AuthController {
 //    }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequest loginRequest){
         return ResponseEntity.ok(authService.login(loginRequest.getEmail(), loginRequest.getPassword()));
     }
 }

@@ -3,6 +3,7 @@ package com.priyhotel.service;
 import com.priyhotel.constants.Constants;
 import com.priyhotel.dto.UserDto;
 import com.priyhotel.dto.UserRequestDto;
+import com.priyhotel.dto.UserResponseDto;
 import com.priyhotel.entity.User;
 import com.priyhotel.exception.BadRequestException;
 import com.priyhotel.exception.ResourceNotFoundException;
@@ -85,15 +86,20 @@ public class AuthService {
         return userRepository.findByEmailOrContactNumber(email, phoneNumber);
     }
 
-    public String login(String emailOrPhone, String password) {
+    public UserResponseDto login(String emailOrPhone, String password) {
         User user = this.getUserByEmailOrPhone(emailOrPhone, emailOrPhone)
                 .orElseThrow(() -> new BadRequestException("User not found with the given email or phone"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadRequestException("Invalid phone or password");
         }
-        return jwtUtil.generateToken(user);
-
+        String token = jwtUtil.generateToken(user);
+        return UserResponseDto.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .contactNumber(user.getContactNumber())
+                .token(token)
+                .build();
     }
 
 }
