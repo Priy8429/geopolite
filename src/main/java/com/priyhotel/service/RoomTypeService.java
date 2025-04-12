@@ -84,8 +84,6 @@ public class RoomTypeService {
         List<RoomTypeDto> roomTypeDtos = roomTypeMapper.toDtos(roomTypes);
 
         roomTypeDtos.forEach(roomTypeDto -> {
-            System.out.println(Objects.nonNull(roomTypeDto.getOfferEndDate()));
-            System.out.println(roomTypeDto.getOfferEndDate().isAfter(LocalDate.now()));
             if(Objects.nonNull(roomTypeDto.getOfferEndDate()) &&
                     !roomTypeDto.getOfferStartDate().isAfter(LocalDate.now()) &&
                     !roomTypeDto.getOfferEndDate().isBefore(LocalDate.now())){
