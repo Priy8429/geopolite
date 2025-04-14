@@ -95,6 +95,7 @@ public class AuthService {
         }
         String token = jwtUtil.generateToken(user);
         return UserResponseDto.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .contactNumber(user.getContactNumber())

@@ -56,4 +56,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "ORDER BY b.checkInDate ASC")
     List<Booking> findOnwardBookings(@Param("hotelId") Long hotelId);
 
+    Booking getBookingByBookingNumber(String bookingNumber);
 }

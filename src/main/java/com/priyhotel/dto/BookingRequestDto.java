@@ -14,9 +14,9 @@ public class BookingRequestDto {
     private Long userId;
     private Long hotelId;
     private String couponCode;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Integer noOfAdults;
+    private Integer noOfChildrens;
     private LocalDate checkInDate;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate checkOutDate;
     private PaymentType paymentType;
     private List<RoomBookingDto> roomBookingList;

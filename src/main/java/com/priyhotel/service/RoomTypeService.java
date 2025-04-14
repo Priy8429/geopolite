@@ -84,15 +84,7 @@ public class RoomTypeService {
         List<RoomTypeDto> roomTypeDtos = roomTypeMapper.toDtos(roomTypes);
 
         roomTypeDtos.forEach(roomTypeDto -> {
-            if(Objects.nonNull(roomTypeDto.getOfferEndDate()) &&
-                    !roomTypeDto.getOfferStartDate().isAfter(LocalDate.now()) &&
-                    !roomTypeDto.getOfferEndDate().isBefore(LocalDate.now())){
-                double discount = roomTypeDto.getPricePerNight() * (roomTypeDto.getOfferDiscountPercentage() / 100.0);
-                double offerPrice = roomTypeDto.getPricePerNight() - discount;
-                roomTypeDto.setOfferPrice(offerPrice);
-            }else{
-                roomTypeDto.setOfferPrice(roomTypeDto.getPricePerNight());
-            }
+            roomTypeDto.setOfferPrice(this.getAmountAfterDiscount(roomTypeDto.getOfferStartDate(), roomTypeDto.getOfferEndDate(), roomTypeDto.getPricePerNight(), roomTypeDto.getOfferDiscountPercentage()));
         });
         return roomTypeDtos;
     }
@@ -107,5 +99,16 @@ public class RoomTypeService {
         });
         roomTypeRepository.saveAll(roomTypes);
         return "Offers updated!";
+    }
+
+    public Double getAmountAfterDiscount(LocalDate offerStartDate, LocalDate offerEndDate, Double pricePerNight, Double discountPercentage){
+        if(Objects.nonNull(offerEndDate) &&
+                !offerStartDate.isAfter(LocalDate.now()) &&
+                !offerEndDate.isBefore(LocalDate.now())){
+            double discount = pricePerNight * (discountPercentage / 100.0);
+            return pricePerNight - discount;
+        }else{
+            return pricePerNight;
+        }
     }
 }

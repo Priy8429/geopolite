@@ -8,6 +8,7 @@ import com.priyhotel.util.PDFGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -26,6 +27,9 @@ public class EmailService {
 
     @Autowired
     PDFGenerator pdfGenerator;
+
+    @Value("${notification.destination.email}")
+    private String sendToEmail;
 
     @Async
     public void sendPaymentConfirmationEmailToUser(Booking booking, Payment payment) {
@@ -117,7 +121,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             //            String tempEmail = "waqarmohd99@gmail.com";
-            String tempEmail = "princevishwakarma510@gmail.com";
+            String tempEmail = sendToEmail;
             helper.setTo(tempEmail);
             helper.setSubject(subject);
             helper.setText(content, true);
@@ -134,7 +138,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 //            String tempEmail = "waqarmohd99@gmail.com";
-            String tempEmail = "princevishwakarma510@gmail.com";
+            String tempEmail = sendToEmail;
             helper.setTo(tempEmail);
             helper.setSubject("Booking request from "+name);
             helper.setText(content, true);

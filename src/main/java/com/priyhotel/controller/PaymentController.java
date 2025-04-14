@@ -18,9 +18,9 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestParam Long bookingId) {
+    public ResponseEntity<String> createOrder(@RequestParam String bookingNumber) {
         try {
-            String order = paymentService.createOrder(bookingId);
+            String order = paymentService.createOrder(bookingNumber);
             return ResponseEntity.ok(order);
         } catch (RazorpayException e) {
             return ResponseEntity.status(500).body("Error creating order: " + e.getMessage());

@@ -71,24 +71,33 @@ public class BookingService {
             throw new BadRequestException("Room/s not available!");
         }
 
-        double totalAmount = (bookingRequestDto.getCheckOutDate().toEpochDay() - bookingRequestDto.getCheckInDate().toEpochDay())
-                * availableRooms.stream().mapToDouble(item -> item.getRoomType().getPricePerNight()).sum();
-
-        double amountAfterDiscount = totalAmount;
+//        double totalAmount = (bookingRequestDto.getCheckOutDate().toEpochDay() - bookingRequestDto.getCheckInDate().toEpochDay())
+//                * availableRooms.stream().mapToDouble(item -> item.getRoomType().getPricePerNight()).sum();
+//
+//        double amountAfterDiscount = totalAmount;
 
         Booking booking = new Booking();
 
-        if(!bookingRequestDto.getCouponCode().isBlank()){
-            Coupon coupon = couponService.getCouponByCouponCode(bookingRequestDto.getCouponCode());
-            amountAfterDiscount = couponService.applyDiscount(coupon,  totalAmount);
-            booking.setCouponApplied(true);
-            booking.setCouponCode(bookingRequestDto.getCouponCode());
-        }
+//        if(!bookingRequestDto.getCouponCode().isBlank()){
+//            Coupon coupon = couponService.getCouponByCouponCode(bookingRequestDto.getCouponCode());
+//            amountAfterDiscount = couponService.applyDiscount(coupon,  totalAmount);
+//            booking.setCouponApplied(true);
+//            booking.setCouponCode(bookingRequestDto.getCouponCode());
+//        }
+
+        Double totalAmount = availableRooms.stream().mapToDouble(room -> room.getRoomType().getPricePerNight()).sum();
+
+        Double amountAfterDiscount = availableRooms.stream().mapToDouble(room ->
+                roomTypeService.getAmountAfterDiscount(room.getRoomType().getOfferStartDate(), room.getRoomType().getOfferEndDate(),
+                        room.getRoomType().getPricePerNight(), room.getRoomType().getOfferDiscountPercentage()))
+                .sum();
 
         booking.setBookingNumber(this.generateBookingNumber());
         booking.setUser(user);
         booking.setHotel(hotel);
         booking.setTotalRooms(availableRooms.size());
+        booking.setNoOfAdults(bookingRequestDto.getNoOfAdults());
+        booking.setNoOfChildrens(bookingRequestDto.getNoOfChildrens());
         booking.setCheckInDate(bookingRequestDto.getCheckInDate());
         booking.setCheckOutDate(bookingRequestDto.getCheckOutDate());
         booking.setTotalAmount(amountAfterDiscount);
@@ -156,18 +165,28 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public double calculateBookingAmount(LocalDate checkinDate, LocalDate checkoutDate, List<RoomBooking> rooms, String couponCode){
-        Long noOfDays = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+//    public double calculateBookingAmount(LocalDate checkinDate, LocalDate checkoutDate, List<RoomBooking> rooms, String couponCode){
+//        long noOfDays = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+//
+//        double totalRoomsCost = rooms.stream().mapToDouble(room -> room.getRoom().getRoomType().getPricePerNight()).sum();
+//
+//        double totalPrice = totalRoomsCost * noOfDays;
+//        if(Objects.nonNull(couponCode) && !couponCode.isBlank()){
+//            Coupon coupon = couponService.getCouponByCouponCode(couponCode);
+//            totalPrice = couponService.applyDiscount(coupon,  totalPrice);
+//        }
+//
+//        return totalPrice;
+//    }
 
-        double totalRoomsCost = rooms.stream().mapToDouble(room -> room.getRoom().getRoomType().getPricePerNight()).sum();
+    public Double calculateBookingAmount(LocalDate checkinDate, LocalDate checkoutDate, List<RoomBooking> rooms){
+        long noOfDays = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
 
-        double totalPrice = totalRoomsCost * noOfDays;
-        if(Objects.nonNull(couponCode) && !couponCode.isBlank()){
-            Coupon coupon = couponService.getCouponByCouponCode(couponCode);
-            totalPrice = couponService.applyDiscount(coupon,  totalPrice);
-        }
-        
-        return totalPrice;
+        Double totalAmount = rooms.stream().mapToDouble(room -> roomTypeService.getAmountAfterDiscount(
+                room.getRoom().getRoomType().getOfferStartDate(), room.getRoom().getRoomType().getOfferEndDate(),
+                room.getRoom().getRoomType().getPricePerNight(), room.getRoom().getRoomType().getOfferDiscountPercentage()
+        )).sum();
+        return totalAmount * noOfDays;
     }
 
     private void saveBookedRooms(List<RoomBooking> bookedRooms){
@@ -224,4 +243,9 @@ public class BookingService {
         List<Booking> bookings = bookingRepository.findOnwardBookings(hotelId);
         return bookingMapper.toDtos(bookings);
     }
+
+    public Booking getBookingByBookingNumber(String bookingNumber) {
+        return bookingRepository.getBookingByBookingNumber(bookingNumber);
+    }
+
 }

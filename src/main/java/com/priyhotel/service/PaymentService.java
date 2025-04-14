@@ -45,15 +45,14 @@ public class PaymentService {
     @Autowired
     EmailService emailService;
 
-    public String createOrder(Long bookingId) throws RazorpayException {
+    public String createOrder(String bookingNumber) throws RazorpayException {
         RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
 
         // Link order with a booking
-        Booking booking = bookingService.getBookingById(bookingId);
+        Booking booking = bookingService.getBookingByBookingNumber(bookingNumber);
 
         double validatedAmount = bookingService.calculateBookingAmount(
-                booking.getCheckInDate(), booking.getCheckOutDate(),
-                booking.getBookedRooms(), booking.getCouponCode());
+                booking.getCheckInDate(), booking.getCheckOutDate(), booking.getBookedRooms());
 
         if(booking.getTotalAmount() != validatedAmount){
             throw new BadRequestException("Discrepancy in booking amount");
