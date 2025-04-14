@@ -30,11 +30,11 @@ public class PDFGenerator {
             document.open();
 
             // Add Hotel Logo
-            Image logo = Image.getInstance(Objects.requireNonNull(getClass().getResource("/static/logo.png"))); // Update path
+//            Image logo = Image.getInstance(Objects.requireNonNull(getClass().getResource("/static/logo.png"))); // Update path
 
-            logo.scaleAbsolute(100, 50);
-            logo.setAlignment(Element.ALIGN_LEFT);
-            document.add(logo);
+//            logo.scaleAbsolute(100, 50);
+//            logo.setAlignment(Element.ALIGN_LEFT);
+//            document.add(logo);
 
             // Title
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
