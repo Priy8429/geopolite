@@ -59,7 +59,7 @@ public class AssetService {
             Files.write(filePath, file.getBytes());
 
             // Return relative path for storage
-            return "/" + baseUrl + "/"  + fileName;
+            return baseUrl + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Error saving file", e);
         }
