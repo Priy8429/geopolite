@@ -43,6 +43,7 @@ com\priyhotel\mapper\RoomTypeMapper.class
 com\priyhotel\constants\PaymentType.class
 com\priyhotel\dto\LoginRequest.class
 com\priyhotel\PriyhotelApplication.class
+com\priyhotel\config\WebConfig.class
 com\priyhotel\controller\HotelController.class
 com\priyhotel\repository\RoomBookingRepository.class
 com\priyhotel\repository\AmenityRepository.class

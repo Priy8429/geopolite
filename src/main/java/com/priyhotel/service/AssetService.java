@@ -23,6 +23,9 @@ public class AssetService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Value("${file.base-url}")
+    private String baseUrl;
+
     @Autowired
     private AssetRepository assetRepository;
 
@@ -56,7 +59,7 @@ public class AssetService {
             Files.write(filePath, file.getBytes());
 
             // Return relative path for storage
-            return "/" + fileName;
+            return "/" + baseUrl + "/"  + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Error saving file", e);
         }
