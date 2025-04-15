@@ -45,7 +45,7 @@ public class RoomTypeController {
         return ResponseEntity.ok(roomTypeService.addRoomType(roomTypeRequestDto));
     }
 
-    @PutMapping("/{roomTypeId}")
+    @PatchMapping("/{roomTypeId}")
     public ResponseEntity<RoomType> updateRoomType(@PathVariable Long roomTypeId, @RequestBody RoomTypeRequestDto roomTypeRequestDto){
         return ResponseEntity.ok(roomTypeService.updateRoomType(roomTypeId, roomTypeRequestDto));
     }

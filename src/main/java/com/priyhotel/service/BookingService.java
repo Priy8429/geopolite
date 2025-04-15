@@ -67,7 +67,9 @@ public class BookingService {
 
         List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto, alreadyBookedRoomNumbers);
 
-        if(availableRooms.isEmpty() || availableRooms.size() != bookingRequestDto.getRoomBookingList().size()){
+        int requestedRoomsQty = bookingRequestDto.getRoomBookingList().stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
+
+        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
             throw new BadRequestException("Room/s not available!");
         }
 
@@ -248,4 +250,9 @@ public class BookingService {
         return bookingRepository.getBookingByBookingNumber(bookingNumber);
     }
 
+    public Booking updateCheckoutDate(Long bookingId, LocalDate newCheckoutDate) {
+        Booking booking = this.getBookingById(bookingId);
+        booking.setCheckOutDate(newCheckoutDate);
+        return bookingRepository.save(booking);
+    }
 }

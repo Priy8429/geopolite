@@ -103,28 +103,28 @@ INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (33
 
 ALTER TABLE rooms ALTER COLUMN id RESTART WITH 34;
 
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 1, NULL, '/1743922849947-non_ac_img_1.jpeg', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 2, NULL, '/1743922849959-non_ac_img_2.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 3, NULL, '/1743922849995-non_ac_img_3.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 4, NULL, '/1743923045364-deluxe_room_1.jpeg', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 5, NULL, '/1743923045387-deluxe_room_2.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 6, NULL, '/1743923045425-deluxe_room_3.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 7, NULL, '/1743923045450-deluxe_room_4.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 8, NULL, '/1743923059725-executive_room_1.jpeg', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 9, NULL, '/1743923059734-executive_room_2.jpeg', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 10, NULL, '/1743923059745-executive_room_3.JPG', 'image');
-INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 11, NULL, '/1743923059774-executive_room_4.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 1, NULL, '/1743922849947-non_ac_img_1.jpeg', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 2, NULL, '/1743922849959-non_ac_img_2.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 3, NULL, '/1743922849995-non_ac_img_3.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 4, NULL, '/1743923045364-deluxe_room_1.jpeg', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 5, NULL, '/1743923045387-deluxe_room_2.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 6, NULL, '/1743923045425-deluxe_room_3.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 7, NULL, '/1743923045450-deluxe_room_4.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 8, NULL, '/1743923059725-executive_room_1.jpeg', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 9, NULL, '/1743923059734-executive_room_2.jpeg', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 10, NULL, '/1743923059745-executive_room_3.JPG', 'image');
+--INSERT INTO assets (id, asset_thumb_url, asset_url, asset_type) VALUES ( 11, NULL, '/1743923059774-executive_room_4.JPG', 'image');
+--
+--ALTER TABLE assets ALTER COLUMN id RESTART WITH 12;
 
-ALTER TABLE assets ALTER COLUMN id RESTART WITH 12;
-
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (1, 1);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (2, 1);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (3, 1);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (4, 2);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (5, 2);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (6, 2);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (7, 2);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (8, 3);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (9, 3);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (10, 3);
-INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (11, 3);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (1, 1);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (2, 1);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (3, 1);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (4, 2);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (5, 2);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (6, 2);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (7, 2);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (8, 3);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (9, 3);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (10, 3);
+--INSERT INTO room_type_assets(asset_id, room_type_id) VALUES (11, 3);

@@ -43,23 +43,47 @@ public class RoomTypeService {
         return roomTypeRepository.save(roomType);
     }
 
-    public RoomType updateRoomType(Long roomTypeId, RoomTypeRequestDto roomTypeRequestDto){
+    public RoomType updateRoomType(Long roomTypeId, RoomTypeRequestDto dto) {
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room type not found!"));
 
-        List<Amenity> amenities = amenityService.getAmenitiesByIds(roomTypeRequestDto.getAmenityIds());
-        List<Asset> assets = assetService.getAllAssetsByIds(roomTypeRequestDto.getAssetIds());
+        if (dto.getTypeName() != null) {
+            roomType.setTypeName(dto.getTypeName());
+        }
 
-        roomType.setTypeName(roomTypeRequestDto.getTypeName());
-        roomType.setCapacityAdult(roomTypeRequestDto.getCapacityAdult());
-        roomType.setCapacityChild(roomTypeRequestDto.getCapacityChild());
-        roomType.setDescription(roomTypeRequestDto.getDescription());
-        roomType.setPricePerNight(roomTypeRequestDto.getPricePerNight());
-        roomType.setRoomSizeInSquareFeet(roomType.getRoomSizeInSquareFeet());
-        roomType.setAmenities(amenities);
-        roomType.setAssets(assets);
+        if (dto.getCapacityAdult() != null) {
+            roomType.setCapacityAdult(dto.getCapacityAdult());
+        }
+
+        if (dto.getCapacityChild() != null) {
+            roomType.setCapacityChild(dto.getCapacityChild());
+        }
+
+        if (dto.getDescription() != null) {
+            roomType.setDescription(dto.getDescription());
+        }
+
+        if (dto.getPricePerNight() != null) {
+            roomType.setPricePerNight(dto.getPricePerNight());
+        }
+
+        if (dto.getRoomSizeInSquareFeet() != null) {
+            roomType.setRoomSizeInSquareFeet(dto.getRoomSizeInSquareFeet());
+        }
+
+        if (dto.getAmenityIds() != null && !dto.getAmenityIds().isEmpty()) {
+            List<Amenity> amenities = amenityService.getAmenitiesByIds(dto.getAmenityIds());
+            roomType.setAmenities(amenities);
+        }
+
+        if (dto.getAssetIds() != null && !dto.getAssetIds().isEmpty()) {
+            List<Asset> assets = assetService.getAllAssetsByIds(dto.getAssetIds());
+            roomType.setAssets(assets);
+        }
+
         return roomTypeRepository.save(roomType);
     }
+
 
     public boolean deleteRoomById(Long id){
         roomTypeRepository.deleteById(id);
