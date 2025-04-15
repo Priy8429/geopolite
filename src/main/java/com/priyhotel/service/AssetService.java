@@ -33,7 +33,7 @@ public class AssetService {
         List<Asset> assets = new ArrayList<>();
         files.forEach(file ->{
             Asset newAsset = new Asset();
-            newAsset.setAssetType(AssetType.valueOf(Objects.requireNonNull(file.getContentType()).split("/")[0]));
+            newAsset.setAssetType(file.getContentType());
             newAsset.setAssetUrl(this.uploadAsset(file, folderName));
             assets.add(newAsset);
         });
