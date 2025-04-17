@@ -116,7 +116,7 @@ public class RoomTypeService {
     public String updateOffers(OffersUpdateDto offersUpdateDto) {
         List<RoomType> roomTypes = roomTypeRepository.findRoomTypesByHotel(offersUpdateDto.getHotelId());
         roomTypes.forEach(roomType -> {
-            Double discountPercent = offersUpdateDto.getOfferRoomMap().get(roomType.getTypeName());
+            Double discountPercent = offersUpdateDto.getOfferRoomMap().get(roomType.getId());
             roomType.setOfferDiscountPercentage(discountPercent);
             roomType.setOfferStartDate(offersUpdateDto.getOfferStartDate());
             roomType.setOfferEndDate(offersUpdateDto.getOfferEndDate());

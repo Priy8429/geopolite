@@ -51,7 +51,7 @@ public class BookingService {
     private RoomTypeMapper roomTypeMapper;
 
     @Transactional
-    public BookingDto createBooking(BookingRequestDto bookingRequestDto) {
+    public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto) {
 
         User user = authService.getUserById(bookingRequestDto.getUserId());
         Hotel hotel = hotelService.getHotelById(bookingRequestDto.getHotelId());
@@ -147,11 +147,12 @@ public class BookingService {
             emailService.sendPaymentConfirmationEmailToOwner(booking, null);
         }
 
-        return bookingMapper.toDto(savedBooking);
+        return bookingMapper.toResponseDto(savedBooking);
     }
 
-    public List<Booking> getUserBookings(Long userId) {
-        return bookingRepository.findByUserId(userId);
+    public List<BookingResponseDto> getUserBookings(Long userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        return bookingMapper.toResponseDtos(bookings);
     }
 
     public Booking getBookingById(Long id) {
@@ -159,12 +160,19 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
-    public Booking cancelBooking(Long bookingId) {
+    public BookingResponseDto getBookingResponseById(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        return bookingMapper.toResponseDto(booking);
+    }
+
+    public BookingResponseDto cancelBooking(Long bookingId) {
         Booking booking = getBookingById(bookingId);
         if (booking.getStatus() == BookingStatus.CONFIRMED) {
             booking.setStatus(BookingStatus.CANCELLED);
         }
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        return bookingMapper.toResponseDto(booking);
     }
 
 //    public double calculateBookingAmount(LocalDate checkinDate, LocalDate checkoutDate, List<RoomBooking> rooms, String couponCode){
@@ -216,19 +224,19 @@ public class BookingService {
         return rtDtos;
     }
 
-    public List<BookingDto> getUserCheckinsByDate(LocalDate checkinDate) {
+    public List<BookingResponseDto> getUserCheckinsByDate(LocalDate checkinDate) {
         List<Booking> bookings = bookingRepository.findByCheckInDate(checkinDate);
-        return bookingMapper.toDtos(bookings);
+        return bookingMapper.toResponseDtos(bookings);
 
     }
 
-    public List<BookingDto> getUserCheckoutsByDate(LocalDate checkoutDate) {
+    public List<BookingResponseDto> getUserCheckoutsByDate(LocalDate checkoutDate) {
         List<Booking> bookings = bookingRepository.findByCheckOutDate(checkoutDate);
-        return bookingMapper.toDtos(bookings);
+        return bookingMapper.toResponseDtos(bookings);
 
     }
 
-    public List<BookingDto> getBookingsByHotelAndDateRange(Long hotelId, LocalDate startDate, LocalDate endDate) {
+    public List<BookingResponseDto> getBookingsByHotelAndDateRange(Long hotelId, LocalDate startDate, LocalDate endDate) {
         if(Objects.isNull(startDate)){
             startDate = LocalDate.now();
         }
@@ -237,22 +245,23 @@ public class BookingService {
         }
 
         List<Booking> bookings = bookingRepository.findBookingsByHotelAndDateRange(hotelId, startDate, endDate);
-        return bookingMapper.toDtos(bookings);
+        return bookingMapper.toResponseDtos(bookings);
 
     }
 
-    public List<BookingDto> getOnwardBookings(Long hotelId) {
+    public List<BookingResponseDto> getOnwardBookings(Long hotelId) {
         List<Booking> bookings = bookingRepository.findOnwardBookings(hotelId);
-        return bookingMapper.toDtos(bookings);
+        return bookingMapper.toResponseDtos(bookings);
     }
 
     public Booking getBookingByBookingNumber(String bookingNumber) {
         return bookingRepository.getBookingByBookingNumber(bookingNumber);
     }
 
-    public Booking updateCheckoutDate(Long bookingId, LocalDate newCheckoutDate) {
+    public BookingResponseDto updateCheckoutDate(Long bookingId, LocalDate newCheckoutDate) {
         Booking booking = this.getBookingById(bookingId);
         booking.setCheckOutDate(newCheckoutDate);
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        return bookingMapper.toResponseDto(booking);
     }
 }

@@ -65,8 +65,10 @@ com\priyhotel\dto\DefaultErrorResponse$DefaultErrorResponseBuilder.class
 com\priyhotel\service\PaymentService.class
 com\priyhotel\dto\DefaultErrorResponse.class
 com\priyhotel\dto\PaymentVerifyRequestDto.class
+com\priyhotel\dto\BookingResponseDto$BookingResponseDtoBuilder.class
 com\priyhotel\dto\UserResponseDto$UserResponseDtoBuilder.class
 com\priyhotel\dto\BookingDto.class
+com\priyhotel\dto\RoomDto$RoomDtoBuilder.class
 com\priyhotel\entity\Location.class
 com\priyhotel\config\SecurityConfig.class
 com\priyhotel\controller\AdminController.class
@@ -87,7 +89,9 @@ com\priyhotel\service\SmsService.class
 com\priyhotel\repository\AssetRepository.class
 com\priyhotel\constants\Constants.class
 com\priyhotel\dto\UserDto.class
+com\priyhotel\dto\RoomDto.class
 com\priyhotel\entity\Booking.class
+com\priyhotel\dto\BookingResponseDto.class
 com\priyhotel\entity\Review.class
 com\priyhotel\entity\User.class
 com\priyhotel\repository\PaymentRepository.class

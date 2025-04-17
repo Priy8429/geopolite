@@ -2,6 +2,7 @@ package com.priyhotel.controller;
 
 import com.priyhotel.dto.BookingRequestDto;
 import com.priyhotel.dto.BookingRequestQueryDto;
+import com.priyhotel.dto.BookingResponseDto;
 import com.priyhotel.dto.DefaultErrorResponse;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.service.BookingService;
@@ -41,17 +42,17 @@ public class BookingController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Booking>> getUserBookings(@PathVariable Long userId) {
+    public ResponseEntity<List<BookingResponseDto>> getUserBookings(@PathVariable Long userId) {
         return ResponseEntity.ok(bookingService.getUserBookings(userId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.getBookingById(id));
+    public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.getBookingResponseById(id));
     }
 
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<Booking> cancelBooking(@PathVariable Long id) {
+    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.cancelBooking(id));
     }
 

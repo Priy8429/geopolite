@@ -14,5 +14,5 @@ public class OffersUpdateDto {
     private Long hotelId;
     private LocalDate offerStartDate;
     private LocalDate offerEndDate;
-    private Map<String, Double> offerRoomMap;
+    private Map<Long, Double> offerRoomMap;
 }

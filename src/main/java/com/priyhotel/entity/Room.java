@@ -16,7 +16,6 @@ public class Room {
     @Column(nullable = false)
     private String roomNumber;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
