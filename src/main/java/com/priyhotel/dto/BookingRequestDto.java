@@ -19,5 +19,7 @@ public class BookingRequestDto {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private PaymentType paymentType;
+    private Double totalAmount;
+    private Double payableAmount;
     private List<RoomBookingDto> roomBookingList;
 }

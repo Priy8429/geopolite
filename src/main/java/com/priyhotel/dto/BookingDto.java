@@ -24,7 +24,7 @@ public class BookingDto {
     private Double totalAmount;
     private Boolean couponApplied;
     private String couponCode;
-    private Double discountAmount;
+    private Double payableAmount;
     private Integer totalRooms;
     private Integer noOfAdults;
     private Integer noOfChildrens;

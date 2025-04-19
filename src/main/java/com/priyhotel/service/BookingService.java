@@ -87,12 +87,12 @@ public class BookingService {
 //            booking.setCouponCode(bookingRequestDto.getCouponCode());
 //        }
 
-        Double totalAmount = availableRooms.stream().mapToDouble(room -> room.getRoomType().getPricePerNight()).sum();
+//        Double totalAmount = availableRooms.stream().mapToDouble(room -> room.getRoomType().getPricePerNight()).sum();
 
-        Double amountAfterDiscount = availableRooms.stream().mapToDouble(room ->
-                roomTypeService.getAmountAfterDiscount(room.getRoomType().getOfferStartDate(), room.getRoomType().getOfferEndDate(),
-                        room.getRoomType().getPricePerNight(), room.getRoomType().getOfferDiscountPercentage()))
-                .sum();
+//        Double amountAfterDiscount = availableRooms.stream().mapToDouble(room ->
+//                roomTypeService.getAmountAfterDiscount(room.getRoomType().getOfferStartDate(), room.getRoomType().getOfferEndDate(),
+//                        room.getRoomType().getPricePerNight(), room.getRoomType().getOfferDiscountPercentage()))
+//                .sum();
 
         booking.setBookingNumber(this.generateBookingNumber());
         booking.setUser(user);
@@ -102,9 +102,9 @@ public class BookingService {
         booking.setNoOfChildrens(bookingRequestDto.getNoOfChildrens());
         booking.setCheckInDate(bookingRequestDto.getCheckInDate());
         booking.setCheckOutDate(bookingRequestDto.getCheckOutDate());
-        booking.setTotalAmount(amountAfterDiscount);
+        booking.setTotalAmount(bookingRequestDto.getTotalAmount());
 //        booking.setPaymentType(PAy);
-        booking.setDiscountAmount(totalAmount - amountAfterDiscount);
+        booking.setPayableAmount(bookingRequestDto.getPayableAmount());
         booking.setStatus(BookingStatus.PENDING);
 
         if(Objects.isNull(booking.getPaymentType())){

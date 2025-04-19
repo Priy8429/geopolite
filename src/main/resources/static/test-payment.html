@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Razorpay Test Checkout</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<button id="pay-button">Pay Now</button>
+
+<script>
+    document.getElementById('pay-button').onclick = function () {
+      var options = {
+        "key": "rzp_test_B9mzPUuuN7s5Ng", // Replace with your Razorpay Key ID
+        "amount": 120000, // Amount in paise (e.g., 50000 = ₹500)
+        "currency": "INR",
+        "name": "Test Hotel",
+        "description": "Test Transaction",
+        "order_id": "order_QKq6uw6B2NdmCN", // Replace with actual order_id from your backend
+        "handler": function (response){
+            // Normally you'd send this data to backend
+<!--            alert(-->
+<!--              "Payment ID: " + response.razorpay_payment_id + "\n" +-->
+<!--              "Order ID: " + response.razorpay_order_id + "\n" +-->
+<!--              "Signature: " + response.razorpay_signature-->
+<!--            );-->
+        console.log("Payment ID: " + response.razorpay_payment_id + "\n" +
+              "Order ID: " + response.razorpay_order_id + "\n" +
+              "Signature: " + response.razorpay_signature);
+        },
+        "prefill": {
+          "name": "Test User",
+          "email": "test@example.com",
+          "contact": "9999999999"
+        },
+        "theme": {
+          "color": "#3399cc"
+        }
+      };
+
+      var rzp = new Razorpay(options);
+      rzp.open();
+    }
+</script>
+</body>
+</html>

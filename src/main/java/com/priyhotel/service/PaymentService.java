@@ -10,6 +10,7 @@ import com.priyhotel.util.PDFGenerator;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,39 +52,39 @@ public class PaymentService {
         // Link order with a booking
         Booking booking = bookingService.getBookingByBookingNumber(bookingNumber);
 
-        double validatedAmount = bookingService.calculateBookingAmount(
-                booking.getCheckInDate(), booking.getCheckOutDate(), booking.getBookedRooms());
-
-        if(booking.getTotalAmount() != validatedAmount){
-            throw new BadRequestException("Discrepancy in booking amount");
-        }
+//        double validatedAmount = bookingService.calculateBookingAmount(
+//                booking.getCheckInDate(), booking.getCheckOutDate(), booking.getBookedRooms());
+//
+//        if(booking.getTotalAmount() != validatedAmount){
+//            throw new BadRequestException("Discrepancy in booking amount");
+//        }
 
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", (int) (booking.getTotalAmount() * 100)); // Amount in paise
+        orderRequest.put("amount", (int) (booking.getPayableAmount() * 100)); // Amount in paise
         orderRequest.put("currency", currency);
         orderRequest.put("receipt", "txn_123456");
 
-//        Order order = razorpay.orders.create(orderRequest);
+        Order order = razorpay.orders.create(orderRequest);
 
         Payment payment = new Payment();
-//        payment.setRazorpayOrderId(order.get("id"));
-        payment.setRazorpayOrderId(UUID.randomUUID().toString());
-        payment.setRazorpayPaymentId(UUID.randomUUID().toString());
+        payment.setRazorpayOrderId(order.get("id"));
+//        payment.setRazorpayOrderId(UUID.randomUUID().toString());
+//        payment.setRazorpayPaymentId(UUID.randomUUID().toString());
         payment.setAmount(booking.getTotalAmount());
         payment.setStatus("PENDING");
         payment.setPaymentDate(LocalDateTime.now());
         payment.setBooking(booking);
         paymentRepository.save(payment);
-//        return order.toString();
-        return "order created";
+        return order.toString();
+//        return "order created";
     }
 
     // Verify and Save Payment
     public boolean verifyAndSavePayment(PaymentVerifyRequestDto paymentVerifyRequestDto) {
         try {
             String payload = paymentVerifyRequestDto.getOrderId() + "|" + paymentVerifyRequestDto.getPaymentId();
-            String generatedSignature = HmacSHA256(payload, apiSecret);
-
+//            String generatedSignature = HmacSHA256(payload, apiSecret);
+            Utils.verifySignature(payload, paymentVerifyRequestDto.getSignature(), apiSecret);
 //            if (generatedSignature.equals(signature)) {
                 Payment payment = paymentRepository.findByRazorpayOrderId(paymentVerifyRequestDto.getOrderId())
                         .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
@@ -104,8 +105,9 @@ public class PaymentService {
 //            }
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
+
     }
 
     // HMAC SHA256 Helper Method

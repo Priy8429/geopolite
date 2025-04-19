@@ -53,7 +53,7 @@ public class Booking {
 
     private String couponCode;
 
-    private Double discountAmount;
+    private Double payableAmount;
 
     private Integer totalRooms;
 
