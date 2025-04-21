@@ -17,7 +17,7 @@ public class Payment {
     @Column(nullable = false, unique = true)
     private String razorpayOrderId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true)
     private String razorpayPaymentId;
 
     @Column(nullable = false)
@@ -30,6 +30,6 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = true)
     private Booking booking;
 }

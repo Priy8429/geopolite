@@ -38,7 +38,7 @@ public class AuthService {
         return Constants.USER_CREATED_SUCCESS_MSG;
     }
 
-    public UserDto register(UserRequestDto user){
+    public User register(UserRequestDto user){
 //        Optional<User> existingUser = userRepository.findByContactNumber(user.getContactNumber());
 //        if(existingUser.isPresent()){
 //            user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -59,9 +59,10 @@ public class AuthService {
         newUser.setEmail(user.getEmail());
         newUser.setContactNumber(user.getContactNumber());
         newUser.setRole(user.getRole());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userRepository.save(newUser);
-        return userMapper.toDto(savedUser);
+        if(Objects.nonNull(user.getPassword())){
+            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        return userRepository.save(newUser);
     }
 
 //    public UserDto updateUser(User user){
@@ -75,6 +76,17 @@ public class AuthService {
     public User getUserById(Long id){
         return userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found!"));
+    }
+
+    public User getUserByIdCanNull(Long id){
+        if(Objects.nonNull(id)){
+            Optional<User> user = userRepository.findById(id);
+            if(user.isPresent()){
+                return user.get();
+            }
+        }
+
+        return null;
     }
 
     public User getUserByPhone(String phoneNumber){

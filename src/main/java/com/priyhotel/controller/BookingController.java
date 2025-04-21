@@ -1,9 +1,6 @@
 package com.priyhotel.controller;
 
-import com.priyhotel.dto.BookingRequestDto;
-import com.priyhotel.dto.BookingRequestQueryDto;
-import com.priyhotel.dto.BookingResponseDto;
-import com.priyhotel.dto.DefaultErrorResponse;
+import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.service.BookingService;
 import org.slf4j.Logger;
@@ -32,6 +29,20 @@ public class BookingController {
         try{
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(bookingService.createBooking(bookingRequestDto));
+        }catch(Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+    }
+
+    @PostMapping("/guest")
+    public ResponseEntity<?> createBookingFirGuest(@RequestBody GuestBookingRequestDto bookingRequestDto) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingService.createBookingForGuest(bookingRequestDto));
         }catch(Exception ex){
             logger.error("Some error occurred: {}", ex.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()

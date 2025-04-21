@@ -69,7 +69,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto user){
-        return ResponseEntity.ok(authService.register(user));
+        User registeredUser = authService.register(user);
+        return ResponseEntity.ok(userMapper.toDto(registeredUser));
     }
 
 //    @PutMapping("/user")

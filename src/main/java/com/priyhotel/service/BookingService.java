@@ -2,6 +2,7 @@ package com.priyhotel.service;
 
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.constants.Role;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
@@ -9,8 +10,10 @@ import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.mapper.RoomTypeMapper;
 import com.priyhotel.repository.BookingRepository;
 import com.priyhotel.repository.RoomBookingRepository;
+import com.razorpay.RazorpayException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,16 +47,23 @@ public class BookingService {
     @Autowired
     private RoomTypeService roomTypeService;
 
+
+    private final PaymentService paymentService;
+
     @Autowired
     private BookingMapper bookingMapper;
 
     @Autowired
     private RoomTypeMapper roomTypeMapper;
 
+    public BookingService(@Lazy PaymentService paymentService){
+        this.paymentService = paymentService;
+    }
+
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto) {
 
-        User user = authService.getUserById(bookingRequestDto.getUserId());
+        User user = authService.getUserByIdCanNull(bookingRequestDto.getUserId());
         Hotel hotel = hotelService.getHotelById(bookingRequestDto.getHotelId());
 
 //        Map<Long, Integer> roomTypeToQuantityMap = new HashMap<>();
@@ -103,14 +113,14 @@ public class BookingService {
         booking.setCheckInDate(bookingRequestDto.getCheckInDate());
         booking.setCheckOutDate(bookingRequestDto.getCheckOutDate());
         booking.setTotalAmount(bookingRequestDto.getTotalAmount());
-//        booking.setPaymentType(PAy);
+//        booking.setPaymentType(boo);
         booking.setPayableAmount(bookingRequestDto.getPayableAmount());
         booking.setStatus(BookingStatus.PENDING);
 
-        if(Objects.isNull(booking.getPaymentType())){
+        if(Objects.isNull(bookingRequestDto.getPaymentType())){
             booking.setPaymentType(PaymentType.POSTPAID);
         }else{
-            booking.setPaymentType(booking.getPaymentType());
+            booking.setPaymentType(bookingRequestDto.getPaymentType());
         }
 
         List<RoomBooking> roomBookings = new ArrayList<>();
@@ -148,6 +158,30 @@ public class BookingService {
         }
 
         return bookingMapper.toResponseDto(savedBooking);
+    }
+
+    public String createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
+        UserRequestDto guestUser = UserRequestDto.builder()
+                .name(guestBookingRequestDto.getFullName())
+                .email(guestBookingRequestDto.getEmail())
+                .contactNumber(guestBookingRequestDto.getPhone())
+                .role(Role.GUEST).build();
+        User registeredUser = authService.register(guestUser);
+        BookingRequestDto bookingDto = BookingRequestDto.builder()
+                .userId(registeredUser.getId()) // null if guest
+                .hotelId(1L)
+                .couponCode("")
+                .noOfAdults(guestBookingRequestDto.getNoOfAdults())
+                .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
+                .checkInDate(guestBookingRequestDto.getCheckInDate())
+                .checkOutDate(guestBookingRequestDto.getCheckOutDate())
+                .paymentType(PaymentType.PREPAID)
+                .totalAmount(guestBookingRequestDto.getTotalAmount())
+                .payableAmount(guestBookingRequestDto.getPayableAmount())
+                .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
+                .build();
+        BookingResponseDto booking = this.createBooking(bookingDto);
+        return paymentService.createOrder(booking.getBookingNumber());
     }
 
     public List<BookingResponseDto> getUserBookings(Long userId) {

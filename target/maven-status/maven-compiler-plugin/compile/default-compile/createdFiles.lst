@@ -5,6 +5,9 @@ com\priyhotel\config\DateFormatConfig.class
 com\priyhotel\dto\OtpEntry.class
 com\priyhotel\controller\AuthController.class
 com\priyhotel\util\PDFGenerator.class
+com\priyhotel\dto\BookingRequestDto$BookingRequestDtoBuilder.class
+com\priyhotel\dto\GuestBookingRequestDto.class
+com\priyhotel\dto\GuestBookingRequestDto$GuestBookingRequestDtoBuilder.class
 com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
 com\priyhotel\mapper\HotelMapper.class
