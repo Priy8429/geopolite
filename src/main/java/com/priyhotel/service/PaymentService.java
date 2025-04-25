@@ -1,12 +1,10 @@
 package com.priyhotel.service;
 
-import com.itextpdf.text.pdf.PdfPTable;
 import com.priyhotel.dto.PaymentVerifyRequestDto;
-import com.priyhotel.entity.*;
-import com.priyhotel.exception.BadRequestException;
+import com.priyhotel.entity.Booking;
+import com.priyhotel.entity.Payment;
 import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.repository.PaymentRepository;
-import com.priyhotel.util.PDFGenerator;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -21,9 +19,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class PaymentService {

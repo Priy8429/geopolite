@@ -161,15 +161,22 @@ public class BookingService {
     }
 
     public String createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
-        UserRequestDto guestUser = UserRequestDto.builder()
-                .name(guestBookingRequestDto.getFullName())
-                .email(guestBookingRequestDto.getEmail())
-                .contactNumber(guestBookingRequestDto.getPhone())
-                .role(Role.GUEST).build();
-        User registeredUser = authService.register(guestUser);
+        User user = null;
+        Optional<User> existingUser = authService.getUserByEmailOrPhone(guestBookingRequestDto.getEmail(), guestBookingRequestDto.getPhone());
+        if(existingUser.isEmpty()){
+            UserRequestDto guestUser = UserRequestDto.builder()
+                    .name(guestBookingRequestDto.getFullName())
+                    .email(guestBookingRequestDto.getEmail())
+                    .contactNumber(guestBookingRequestDto.getPhone())
+                    .role(Role.GUEST).build();
+            user = authService.register(guestUser);
+        }else{
+            user = existingUser.get();
+        }
+
         BookingRequestDto bookingDto = BookingRequestDto.builder()
-                .userId(registeredUser.getId()) // null if guest
-                .hotelId(1L)
+                .userId(user.getId()) // null if guest
+                .hotelId(guestBookingRequestDto.getHotelId())
                 .couponCode("")
                 .noOfAdults(guestBookingRequestDto.getNoOfAdults())
                 .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())

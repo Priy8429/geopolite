@@ -39,7 +39,7 @@ public class BookingController {
     }
 
     @PostMapping("/guest")
-    public ResponseEntity<?> createBookingFirGuest(@RequestBody GuestBookingRequestDto bookingRequestDto) {
+    public ResponseEntity<?> createBookingForGuest(@RequestBody GuestBookingRequestDto bookingRequestDto) {
         try{
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(bookingService.createBookingForGuest(bookingRequestDto));

@@ -35,7 +35,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT DISTINCT rb.room.roomNumber FROM Booking b " +
             "JOIN b.bookedRooms rb " +
             "WHERE b.hotel.id = :hotelId " +
-            "AND (:checkInDate < b.checkOutDate AND :checkOutDate > b.checkInDate)")
+            "AND (:checkInDate < b.checkOutDate AND :checkOutDate > b.checkInDate)" +
+            "AND b.status = 'CONFIRMED'")
             List<String> findBookedRoomNumbers(
             @Param("hotelId") Long hotelId,
             @Param("checkInDate") LocalDate checkInDate,
