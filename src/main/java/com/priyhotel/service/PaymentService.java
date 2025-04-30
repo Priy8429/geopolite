@@ -1,14 +1,20 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.dto.PaymentVerifyRequestDto;
+import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Payment;
+import com.priyhotel.entity.RoomBooking;
+import com.priyhotel.entity.RoomBookingRequest;
 import com.priyhotel.exception.ResourceNotFoundException;
+import com.priyhotel.mapper.RoomBookingMapper;
 import com.priyhotel.repository.PaymentRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
+import jakarta.transaction.Transactional;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 public class PaymentService {
@@ -41,6 +48,10 @@ public class PaymentService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    RoomBookingMapper roomBookingMapper;
+
+    @Transactional
     public String createOrder(String bookingNumber) throws RazorpayException {
         RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
 
@@ -70,12 +81,26 @@ public class PaymentService {
         payment.setPaymentDate(LocalDateTime.now());
         payment.setBooking(booking);
         paymentRepository.save(payment);
+
+        // reserve rooms
+//        List<RoomBookingRequest> roomBookingRequestList = bookingService.getBookingRoomRequestsByBookingId(booking.getId());
+//        List<RoomBookingDto> roomBookingDtos = roomBookingMapper.toDtos(roomBookingRequestList);
+//        List<RoomBooking> bookedRooms = bookingService.bookRooms(
+//                bookingService.getAvailableRooms(booking.getHotel().getId(), booking.getCheckInDate(), booking.getCheckOutDate(),roomBookingDtos)
+//                , booking
+//        );
+//        booking.setBookedRooms(bookedRooms);
+//        bookingService.saveBooking(booking);
+
+        bookingService.reserveRooms(booking);
+
         return order.toString();
 //        return "order created";
     }
 
     // Verify and Save Payment
-    public boolean verifyAndSavePayment(PaymentVerifyRequestDto paymentVerifyRequestDto) {
+    @Transactional
+    public Booking verifyAndSavePayment(PaymentVerifyRequestDto paymentVerifyRequestDto) {
         try {
             String payload = paymentVerifyRequestDto.getOrderId() + "|" + paymentVerifyRequestDto.getPaymentId();
 //            String generatedSignature = HmacSHA256(payload, apiSecret);
@@ -89,6 +114,9 @@ public class PaymentService {
                 payment.setPaymentDate(LocalDateTime.now());
                 paymentRepository.save(payment);
 
+                //update booking status
+                bookingService.updateBookingStatus(payment.getBooking().getBookingNumber(), BookingStatus.CONFIRMED);
+
                 // Send Payment Confirmation Email
                 emailService.sendPaymentConfirmationEmailToUser(payment.getBooking(), payment);
                 emailService.sendPaymentConfirmationEmailToOwner(payment.getBooking(), payment);
@@ -96,13 +124,19 @@ public class PaymentService {
                 // Send payment confirmation sms
 //                smsService.sendPaymentConfirmationSmsToUser(payment);
 //                  smsService.sendPaymentConfirmationSmsToOwner(payment);
-                return true;
+                return payment.getBooking();
 //            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
 
+    }
+
+    public void handlePaymentFailure(String orderId){
+        Payment payment = paymentRepository.findByRazorpayOrderId(orderId).orElseThrow(
+                () -> new ResourceNotFoundException("Payment  not found with orderId: " + orderId));
+        bookingService.removeBookedRooms(payment.getBooking());
     }
 
     // HMAC SHA256 Helper Method

@@ -1,13 +1,16 @@
 com\priyhotel\service\AssetService.class
 com\priyhotel\service\AmenityService.class
+com\priyhotel\entity\RoomBookingRequest.class
 com\priyhotel\entity\Payment.class
 com\priyhotel\config\DateFormatConfig.class
 com\priyhotel\dto\OtpEntry.class
+com\priyhotel\repository\RoomBookingRequestRepository.class
 com\priyhotel\controller\AuthController.class
 com\priyhotel\util\PDFGenerator.class
 com\priyhotel\dto\BookingRequestDto$BookingRequestDtoBuilder.class
 com\priyhotel\dto\GuestBookingRequestDto.class
 com\priyhotel\dto\GuestBookingRequestDto$GuestBookingRequestDtoBuilder.class
+com\priyhotel\dto\RoomBookingDto$RoomBookingDtoBuilder.class
 com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
 com\priyhotel\mapper\HotelMapper.class
@@ -68,6 +71,7 @@ com\priyhotel\dto\DefaultErrorResponse$DefaultErrorResponseBuilder.class
 com\priyhotel\service\PaymentService.class
 com\priyhotel\dto\DefaultErrorResponse.class
 com\priyhotel\dto\PaymentVerifyRequestDto.class
+com\priyhotel\mapper\RoomBookingMapper.class
 com\priyhotel\dto\BookingResponseDto$BookingResponseDtoBuilder.class
 com\priyhotel\dto\UserResponseDto$UserResponseDtoBuilder.class
 com\priyhotel\dto\BookingDto.class

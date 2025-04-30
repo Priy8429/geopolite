@@ -51,7 +51,7 @@ public class BookingMapper {
                 .totalRooms(booking.getTotalRooms())
                 .noOfAdults(booking.getNoOfAdults())
                 .noOfChildrens(booking.getNoOfChildrens())
-                .rooms(roomMapper.toDtosFromRoomBooking(booking.getBookedRooms()))
+                .rooms(booking.getBookedRooms() != null ? roomMapper.toDtosFromRoomBooking(booking.getBookedRooms()) : null)
                 .paymentType(booking.getPaymentType())
                 .status(booking.getStatus())
                 .build();

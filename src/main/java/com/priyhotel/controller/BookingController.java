@@ -2,6 +2,7 @@ package com.priyhotel.controller;
 
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
+import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,16 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    BookingMapper bookingMapper;
+
     Logger logger = LoggerFactory.getLogger(BookingController.class);
 
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingRequestDto bookingRequestDto) {
         try{
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(bookingService.createBooking(bookingRequestDto));
+                    .body(bookingMapper.toResponseDto(bookingService.createBooking(bookingRequestDto)));
         }catch(Exception ex){
             logger.error("Some error occurred: {}", ex.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()

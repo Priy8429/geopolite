@@ -1,10 +1,15 @@
 package com.priyhotel.controller;
 
 import com.priyhotel.dto.PaymentVerifyRequestDto;
+import com.priyhotel.entity.Booking;
+import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.PaymentService;
 import com.razorpay.RazorpayException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -12,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @Autowired
+    BookingMapper bookingMapper;
 
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
@@ -28,14 +36,20 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyPayment(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto) {
-        boolean isVerified = paymentService.verifyAndSavePayment(paymentVerifyRequestDto);
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto) {
+        Booking booking = paymentService.verifyAndSavePayment(paymentVerifyRequestDto);
 
-        if (isVerified) {
-            return ResponseEntity.ok("Payment verified successfully.");
+        if (Objects.nonNull(booking)) {
+            return ResponseEntity.ok(bookingMapper.toDto(booking));
         } else {
             return ResponseEntity.status(400).body("Payment verification failed.");
         }
+    }
+
+    @PostMapping("/failure")
+    public ResponseEntity<?> handlePaymentFailure(@RequestParam String orderId){
+        paymentService.handlePaymentFailure(orderId);
+        return ResponseEntity.ok("Payment cancelled");
     }
 
 }

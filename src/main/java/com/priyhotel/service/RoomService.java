@@ -1,6 +1,7 @@
 package com.priyhotel.service;
 
 import com.priyhotel.dto.BookingRequestDto;
+import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.dto.RoomRequestDto;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
@@ -75,11 +76,11 @@ public class RoomService {
         return roomRepository.findByHotelIdAndAvailable(hotelId, true);
     }
 
-    public List<Room> findAvailableRoomsForRoomTypes(BookingRequestDto bookingRequestDto, List<String> alreadyBookedRooms) {
+    public List<Room> findAvailableRoomsForRoomTypes(Long hotelId, List<RoomBookingDto> roomBookingDtos, List<String> alreadyBookedRooms) {
         List<Room> availableRooms = new ArrayList<>();
-        bookingRequestDto.getRoomBookingList().forEach(request -> {
+        roomBookingDtos.forEach(request -> {
             //fetch not booked rooms
-            List<Room> foundRooms = roomRepository.findAvailableRooms(bookingRequestDto.getHotelId(), request.getRoomTypeId(), alreadyBookedRooms, PageRequest.of(0, request.getNoOfRooms()));
+            List<Room> foundRooms = roomRepository.findAvailableRooms(hotelId, request.getRoomTypeId(), alreadyBookedRooms, PageRequest.of(0, request.getNoOfRooms()));
 
             if(foundRooms.size() < request.getNoOfRooms()){
                 throw new BadRequestException("Room/s not available for the selected dates!");
@@ -100,4 +101,5 @@ public class RoomService {
         }
         return roomTypeCounts;
     }
+
 }

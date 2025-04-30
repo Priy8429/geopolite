@@ -54,6 +54,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking b " +
             "WHERE b.hotel.id = :hotelId " +
             "AND b.checkOutDate >= CURRENT_DATE " +
+            "AND b.status = 'CONFIRMED' " +
             "ORDER BY b.checkInDate ASC")
     List<Booking> findOnwardBookings(@Param("hotelId") Long hotelId);
 
