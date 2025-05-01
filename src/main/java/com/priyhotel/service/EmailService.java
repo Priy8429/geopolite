@@ -35,29 +35,36 @@ public class EmailService {
     public void sendPaymentConfirmationEmailToUser(Booking booking, Payment payment) {
 
         // Generate PDF Invoice
-        byte[] pdfInvoice = pdfGenerator.generateInvoice(booking, payment);
+//        byte[] pdfInvoice = pdfGenerator.generateInvoice(booking, payment);
 
         User user = booking.getUser();
         String email = user.getEmail();
-        String subject = "Booking Confirmation - Booking #" + booking.getBookingNumber();
+        String subject = "Your Booking at Hotel Pride is Confirmed!";
 
         StringBuilder content =  new StringBuilder();
 
-        content.append("<h2>Dear ").append(user.getName()).append(",</h2>");
-        if(Objects.nonNull(payment)){
-            content.append("<p>Your payment of <strong>₹").append(payment.getAmount()).append("</strong> has been successfully received.</p>")
-                    .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>");
-        }
+        content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
+                .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
+                .append("<p><strong>Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
+                .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
+                .append("</br>").append("</br>")
+                .append("<p>We can’t wait to welcome you</p>").append("</br>")
+                .append("<p>Warm regards,</p>").append("</br>")
+                .append("<p>Team Hotel Pride</p>").append("</br>")
+                .append("<p>098199 14047</p>").append("</br>")
+                .append("<a href='www.hotelpride.com'>hotelpride.com</a>");
 
-                content.append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>")
-                .append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>")
-                .append("<p>Thank you for choosing Hotel Pride!</p>")
-                .append("<br>")
-                .append("<p>Best Regards,</p>")
-                .append("<p>Hotel Pride</p>");
 
-        this.sendPaymentConfirmation(email, subject, content.toString(), pdfInvoice);
+//        if(Objects.nonNull(payment)){
+//            content.append("<p>Your payment of <strong>₹").append(payment.getAmount()).append("</strong> has been successfully received.</p>")
+//                    .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>");
+//        }
+
+
+        this.sendPaymentConfirmation(email, subject, content.toString());
     }
 
     @Async
@@ -113,10 +120,10 @@ public class EmailService {
                 .append("<p>Hotel Pride</p>");
 
         // Send email
-        this.sendPaymentConfirmation(email, subject, content.toString(), pdfInvoice);
+        this.sendPaymentConfirmation(email, subject, content.toString());
     }
 
-    public void sendPaymentConfirmation(String toEmail, String subject, String content, byte[] invoicePdf) {
+    public void sendPaymentConfirmation(String toEmail, String subject, String content) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -125,7 +132,7 @@ public class EmailService {
             helper.setTo(tempEmail);
             helper.setSubject(subject);
             helper.setText(content, true);
-            helper.addAttachment("Invoice.pdf", new ByteArrayResource(invoicePdf));
+//            helper.addAttachment("Invoice.pdf", new ByteArrayResource(invoicePdf));
 
             mailSender.send(message);
         } catch (MessagingException e) {

@@ -183,7 +183,7 @@ public class BookingService {
                 .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
                 .build();
         Booking booking = this.createBooking(bookingDto);
-        this.reserveRooms(booking);
+//        this.reserveRooms(booking);
         return paymentService.createOrder(booking.getBookingNumber());
     }
 

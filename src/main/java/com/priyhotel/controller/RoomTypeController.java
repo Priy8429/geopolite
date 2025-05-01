@@ -60,6 +60,11 @@ public class RoomTypeController {
         return ResponseEntity.ok(assetService.uploadAssets(files, Constants.ROOM_TYPE_DIR_NAME));
     }
 
+    @DeleteMapping("/assets/remove")
+    public ResponseEntity<?> removeAsset(@RequestParam Long assetId){
+        return ResponseEntity.ok(assetService.removeAsset(assetId));
+    }
+
     @PatchMapping("/update-offers")
     public ResponseEntity<?> updateOffers(@RequestBody OffersUpdateDto offersUpdateDto){
         return ResponseEntity.ok(roomTypeService.updateOffers(offersUpdateDto));

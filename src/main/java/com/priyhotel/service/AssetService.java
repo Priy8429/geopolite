@@ -2,6 +2,7 @@ package com.priyhotel.service;
 
 import com.priyhotel.constants.AssetType;
 import com.priyhotel.entity.Asset;
+import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.repository.AssetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,6 +44,14 @@ public class AssetService {
 
     }
 
+    public boolean removeAsset(Long assetId){
+        Asset asset = assetRepository.findById(assetId).orElseThrow(
+                () -> new ResourceNotFoundException("Asset not found!"));
+        this.deleteAsset(asset.getAssetUrl());
+        assetRepository.delete(asset);
+        return true;
+    }
+
     public String uploadAsset(MultipartFile file, String folderName) {
         try {
             // Create directory if it doesn't exist
@@ -64,6 +74,21 @@ public class AssetService {
             throw new RuntimeException("Error saving file", e);
         }
     }
+
+    public boolean deleteAsset(String fileUrl) {
+        try {
+            File file = new File(fileUrl);
+
+            if (file.exists()) {
+                return file.delete(); // returns true if deletion was successful
+            } else {
+                throw new FileNotFoundException("File not found: " + fileUrl);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting file", e);
+        }
+    }
+
 
     public Asset saveAsset(Asset asset){
         return assetRepository.save(asset);

@@ -60,12 +60,21 @@ public class RoomService {
     }
 
     public Room updateRoom(Long id, RoomRequestDto updatedRoom) {
-        RoomType roomType = roomTypeService.getRoomTypeById(updatedRoom.getRoomTypeId());
+
         Room existingRoom = getRoomById(id);
-        existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
-        existingRoom.setRoomType(roomType);
+
+        if(updatedRoom.getRoomNumber() != null) {
+            existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
+        }
+
+        if(updatedRoom.getRoomTypeId() != null){
+            RoomType roomType = roomTypeService.getRoomTypeById(updatedRoom.getRoomTypeId());
+            existingRoom.setRoomType(roomType);
+        }
+
         existingRoom.setAvailable(updatedRoom.isRoomAvailable());
-        return roomRepository.save(existingRoom);
+        roomRepository.save(existingRoom);
+        return existingRoom;
     }
 
     public void deleteRoom(Long id) {
