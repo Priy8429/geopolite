@@ -112,7 +112,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             //            String tempEmail = "waqarmohd99@gmail.com";
-            String tempEmail = sendToEmail;
+            String tempEmail = toEmail;
             helper.setTo(tempEmail);
             helper.setSubject(subject);
             helper.setText(content, true);
