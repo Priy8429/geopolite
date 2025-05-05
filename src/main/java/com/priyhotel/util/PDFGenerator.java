@@ -81,7 +81,7 @@ public class PDFGenerator {
 
                 PdfPTable paymentTable = new PdfPTable(2);
                 paymentTable.addCell("Payment status: ");
-                paymentTable.addCell(payment.getStatus());
+                paymentTable.addCell(String.valueOf(payment.getStatus()));
                 paymentTable.addCell("Payment amount: ");
                 paymentTable.addCell(String.valueOf(booking.getTotalAmount()));
                 paymentTable.addCell("Discount amount: ");

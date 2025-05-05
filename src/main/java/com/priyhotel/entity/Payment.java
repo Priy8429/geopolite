@@ -1,5 +1,6 @@
 package com.priyhotel.entity;
 
+import com.priyhotel.constants.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,7 +22,7 @@ public class Payment {
     private String razorpayPaymentId;
 
     @Column(nullable = false)
-    private String status;
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private Double amount;

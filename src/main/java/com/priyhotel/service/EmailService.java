@@ -39,23 +39,28 @@ public class EmailService {
 
         User user = booking.getUser();
         String email = user.getEmail();
-        String subject = "Your Booking at Hotel Pride is Confirmed!";
+        String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
 
         StringBuilder content =  new StringBuilder();
 
         content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
-                .append("<p><strong>Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
+        if(Objects.nonNull(payment)){
+            content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
+                    .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
+                    .append("</br>").append("</br>");
+        }
+                content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
                 .append("<p>We can’t wait to welcome you</p>").append("</br>")
                 .append("<p>Warm regards,</p>").append("</br>")
                 .append("<p>Team Hotel Pride</p>").append("</br>")
-                .append("<p>098199 14047</p>").append("</br>")
-                .append("<a href='www.hotelpride.com'>hotelpride.com</a>");
+                .append("<p>\uD83D\uDCDE 098199 14047</p>").append("</br>")
+                .append("\uD83C\uDF10 <a href='http://hotelpride.com'>hotelpride.com</a>");
 
 
 //        if(Objects.nonNull(payment)){
@@ -71,53 +76,32 @@ public class EmailService {
     public void sendPaymentConfirmationEmailToOwner(Booking booking, Payment payment) {
 
         // Generate PDF Invoice
-        byte[] pdfInvoice = pdfGenerator.generateInvoice(booking, payment);
+//        byte[] pdfInvoice = pdfGenerator.generateInvoice(booking, payment);
 
         String email = booking.getHotel().getEmail();
-        String subject = "Booking Received - Booking #" + booking.getBookingNumber();
+        String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
 
-//        // Start building the HTML table
-//        StringBuilder tableHtml = new StringBuilder();
-//        tableHtml.append("<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 100%;'>");
-//        tableHtml.append("<tr>")
-//                .append("<th>Room Number</th>")
-//                .append("<th>Room Type</th>")
-//                .append("<th>No of Adults</th>")
-//                .append("<th>No of Children</th>")
-//                .append("<th>No of Nights</th>")
-//                .append("</tr>");
-//
-//        for (RoomBooking room : payment.getBooking().getBookedRooms()) {
-//            tableHtml.append("<tr>")
-//                    .append("<td>").append(room.getRoom().getRoomNumber()).append("</td>")
-//                    .append("<td>").append(room.getRoom().getRoomType().getTypeName()).append("</td>")
-//                    .append("<td>").append(room.getNoOfAdults()).append("</td>")
-//                    .append("<td>").append(room.getNoOfChilds()).append("</td>")
-//                    .append("<td>").append(room.getNoOfNights()).append("</td>")
-//                    .append("</tr>");
-//        }
-//
-//        tableHtml.append("</table>");
 
         // Construct the email body
         StringBuilder content =  new StringBuilder();
-        content.append("<h2>Dear ").append(booking.getHotel().getEmail()).append(",</h2>");
-        // add payment information if prepaid
+        content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
+                .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
         if(Objects.nonNull(payment)){
-            content.append("<p>Payment of <strong>₹").append(payment.getAmount()).append("</strong> has been successfully received.</p>").
-                    append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>");
+            content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
+                    .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
+                    .append("</br>").append("</br>");
         }
-        content.append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>")
-                .append("<p><strong>Payment Type:</strong> ").append(booking.getPaymentType()).append("</p>")
-                .append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>")
-                .append("<p><strong>Rooms Booked:</strong> ").append(booking.getTotalRooms()).append("</p>")
-//                + "<h3>Room Details:</h3>"
-//                + tableHtml.toString()  // Add the table here
-                .append("<br>")
-                .append("<p>Thank you for choosing Hotel Pride!</p>")
-                .append("<br>")
-                .append("<p>Best Regards,</p>")
-                .append("<p>Hotel Pride</p>");
+        content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
+                .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
+                .append("</br>").append("</br>")
+                .append("<p>We can’t wait to welcome you</p>").append("</br>")
+                .append("<p>Warm regards,</p>").append("</br>")
+                .append("<p>Team Hotel Pride</p>").append("</br>")
+                .append("<p>\uD83D\uDCDE 098199 14047</p>").append("</br>")
+                .append("\uD83C\uDF10 <a href='http://hotelpride.com'>hotelpride.com</a>");
 
         // Send email
         this.sendPaymentConfirmation(email, subject, content.toString());
@@ -145,7 +129,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 //            String tempEmail = "waqarmohd99@gmail.com";
-            String tempEmail = sendToEmail;
+            String tempEmail = email;
             helper.setTo(tempEmail);
             helper.setSubject("Booking request from "+name);
             helper.setText(content, true);

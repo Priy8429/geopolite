@@ -1,6 +1,7 @@
 package com.priyhotel.service;
 
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.dto.PaymentVerifyRequestDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.Booking;
@@ -68,7 +69,7 @@ public class PaymentService {
         JSONObject orderRequest = new JSONObject();
         orderRequest.put("amount", (int) (booking.getPayableAmount() * 100)); // Amount in paise
         orderRequest.put("currency", currency);
-        orderRequest.put("receipt", "txn_123456");
+        orderRequest.put("receipt", "txn_" + System.currentTimeMillis());
 
         Order order = razorpay.orders.create(orderRequest);
 
@@ -77,7 +78,7 @@ public class PaymentService {
 //        payment.setRazorpayOrderId(UUID.randomUUID().toString());
 //        payment.setRazorpayPaymentId(UUID.randomUUID().toString());
         payment.setAmount(booking.getTotalAmount());
-        payment.setStatus("PENDING");
+        payment.setStatus(PaymentStatus.PENDING);
         payment.setPaymentDate(LocalDateTime.now());
         payment.setBooking(booking);
         paymentRepository.save(payment);
@@ -110,7 +111,7 @@ public class PaymentService {
                         .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
                 payment.setRazorpayPaymentId(paymentVerifyRequestDto.getPaymentId());
-                payment.setStatus("SUCCESS");
+                payment.setStatus(PaymentStatus.PAID);
                 payment.setPaymentDate(LocalDateTime.now());
                 paymentRepository.save(payment);
 
@@ -136,6 +137,8 @@ public class PaymentService {
     public void handlePaymentFailure(String orderId){
         Payment payment = paymentRepository.findByRazorpayOrderId(orderId).orElseThrow(
                 () -> new ResourceNotFoundException("Payment  not found with orderId: " + orderId));
+        payment.setStatus(PaymentStatus.FAILED);
+        paymentRepository.save(payment);
         bookingService.removeBookedRooms(payment.getBooking());
     }
 

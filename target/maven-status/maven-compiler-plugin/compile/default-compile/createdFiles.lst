@@ -13,6 +13,7 @@ com\priyhotel\dto\GuestBookingRequestDto$GuestBookingRequestDtoBuilder.class
 com\priyhotel\dto\RoomBookingDto$RoomBookingDtoBuilder.class
 com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
+com\priyhotel\controller\ForwardController.class
 com\priyhotel\mapper\HotelMapper.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
@@ -90,6 +91,7 @@ com\priyhotel\repository\LocationRepository.class
 com\priyhotel\exception\GlobalExceptionHandler.class
 com\priyhotel\repository\ReviewRepository.class
 com\priyhotel\dto\RoomRequestDto.class
+com\priyhotel\constants\PaymentStatus.class
 com\priyhotel\dto\UserRequestDto.class
 com\priyhotel\exception\ResourceNotFoundException.class
 com\priyhotel\service\SmsService.class
