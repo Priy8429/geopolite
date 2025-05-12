@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 
@@ -30,6 +31,9 @@ public class EmailService {
 
     @Value("${notification.destination.email}")
     private String sendToEmail;
+
+    private final String dateFormat = "dd-MM-yyyy";
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
 
     @Async
     public void sendPaymentConfirmationEmailToUser(Booking booking, Payment payment) {
@@ -52,8 +56,8 @@ public class EmailService {
                     .append("</br>").append("</br>");
         }
                 content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
                 .append("<p>We can’t wait to welcome you</p>").append("</br>")
@@ -93,8 +97,8 @@ public class EmailService {
                     .append("</br>").append("</br>");
         }
         content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate()).append(" 12:00 PM").append("</p>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate()).append("11:00 AM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
                 .append("<p>We can’t wait to welcome you</p>").append("</br>")

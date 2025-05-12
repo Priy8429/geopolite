@@ -65,23 +65,31 @@ public class HotelService {
         return hotelRepository.save(newHotel);
     }
 
-    public Hotel updateHotel(Long id, HotelRequestDto hotelRequestDto) {
-        Location location = locationService.getLocationById(hotelRequestDto.getLocationId());
-
-        List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds(hotelRequestDto.getRoomTypeIds());
-        List<Asset> assets = assetService.getAllAssetsByIds(hotelRequestDto.getAssetIds());
-        return hotelRepository.findById(id)
-                .map(hotel -> {
-                    hotel.setName(hotelRequestDto.getHotelName());
-                    hotel.setLocation(location);
-                    hotel.setAddress(hotelRequestDto.getHotelFullAddress());
-                    hotel.setContactNumber(hotelRequestDto.getHotelPhoneNumber());
-                    hotel.setEmail(hotelRequestDto.getHotelEmail());
-                    hotel.setRoomTypes(roomTypes);
-                    hotel.setAssets(assets);
-                    return hotelRepository.save(hotel);
-                })
+    public Hotel updateHotel(Long id, HotelRequestDto dto){
+        Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found"));
+
+        if (dto.getHotelName()!= null) hotel.setName(dto.getHotelName());
+        if (dto.getHotelFullAddress() != null) hotel.setAddress(dto.getHotelFullAddress());
+        if (dto.getHotelPhoneNumber() != null) hotel.setContactNumber(dto.getHotelPhoneNumber());
+        if (dto.getHotelEmail() != null) hotel.setEmail(dto.getHotelEmail());
+
+        if (dto.getLocationId() != null) {
+            Location location = locationService.getLocationById(dto.getLocationId());
+            hotel.setLocation(location);
+        }
+
+        if (dto.getRoomTypeIds() != null) {
+            List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds((dto.getRoomTypeIds()));
+            hotel.setRoomTypes(roomTypes);
+        }
+
+        if (dto.getAssetIds() != null) {
+            List<Asset> assets = assetService.getAllAssetsByIds(dto.getAssetIds());
+            hotel.setAssets(assets);
+        }
+
+        return hotelRepository.save(hotel);
     }
 
     public void deleteHotel(Long id) {

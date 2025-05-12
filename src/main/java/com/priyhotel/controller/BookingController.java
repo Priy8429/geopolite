@@ -105,8 +105,8 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId));
     }
 
-    @PatchMapping("/{bookingId}/update-checkout")
-    public ResponseEntity<?> updateCheckoutDate(@PathVariable Long bookingId, @RequestParam LocalDate newCheckoutDate){
-        return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingId, newCheckoutDate));
+    @PatchMapping("/{bookingNumber}/update-checkout")
+    public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam LocalDate newCheckoutDate){
+        return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
     }
 }

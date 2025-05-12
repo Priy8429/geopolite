@@ -1,8 +1,10 @@
 package com.priyhotel.dto;
 
 import com.priyhotel.constants.PaymentType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -11,6 +13,8 @@ import java.util.Map;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingRequestDto {
 
     private Long userId;

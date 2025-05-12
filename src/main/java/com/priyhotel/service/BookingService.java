@@ -157,16 +157,24 @@ public class BookingService {
 
     public String createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
         User user = null;
-        Optional<User> existingUser = authService.getUserByEmailOrPhone(guestBookingRequestDto.getEmail(), guestBookingRequestDto.getPhone());
-        if(existingUser.isEmpty()){
+
+        Optional<User> userByEmail = authService.findByEmail(guestBookingRequestDto.getEmail());
+        Optional<User> userByContactNumber = authService.findByPhoneNumber(guestBookingRequestDto.getPhone());
+        if(userByContactNumber.isPresent()){
+            user = userByContactNumber.get();
+        }
+
+        if(userByEmail.isPresent()){
+            user = userByEmail.get();
+        }
+
+        if(userByEmail.isEmpty() && userByContactNumber.isEmpty()){
             UserRequestDto guestUser = UserRequestDto.builder()
                     .name(guestBookingRequestDto.getFullName())
                     .email(guestBookingRequestDto.getEmail())
                     .contactNumber(guestBookingRequestDto.getPhone())
                     .role(Role.GUEST).build();
             user = authService.register(guestUser);
-        }else{
-            user = existingUser.get();
         }
 
         BookingRequestDto bookingDto = BookingRequestDto.builder()
@@ -326,8 +334,8 @@ public class BookingService {
         return bookingRepository.getBookingByBookingNumber(bookingNumber);
     }
 
-    public BookingResponseDto updateCheckoutDate(Long bookingId, LocalDate newCheckoutDate) {
-        Booking booking = this.getBookingById(bookingId);
+    public BookingResponseDto updateCheckoutDate(String bookingNumber, LocalDate newCheckoutDate) {
+        Booking booking = this.getBookingByBookingNumber(bookingNumber);
         booking.setCheckOutDate(newCheckoutDate);
         bookingRepository.save(booking);
         return bookingMapper.toResponseDto(booking);

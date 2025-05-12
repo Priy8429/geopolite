@@ -89,6 +89,14 @@ public class AuthService {
         return null;
     }
 
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> findByPhoneNumber(String phone){
+        return userRepository.findByContactNumber(phone);
+    }
+
     public User getUserByPhone(String phoneNumber){
         return userRepository.findByContactNumber(phoneNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("User with this contact number does not exist"));

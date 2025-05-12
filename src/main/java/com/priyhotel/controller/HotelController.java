@@ -44,9 +44,9 @@ public class HotelController {
         return ResponseEntity.ok(hotelService.addHotel(hotelDto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Hotel> updateHotel(@PathVariable Long id, @RequestBody HotelRequestDto updatedHotel) {
-        return ResponseEntity.ok(hotelService.updateHotel(id, updatedHotel));
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateHotel(@PathVariable Long id, @RequestBody HotelRequestDto hotelRequestDto){
+        return ResponseEntity.ok(hotelService.updateHotel(id, hotelRequestDto));
     }
 
     @DeleteMapping("/{id}")
