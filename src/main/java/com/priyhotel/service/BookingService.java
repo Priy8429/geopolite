@@ -144,7 +144,7 @@ public class BookingService {
             saveBookedRooms(roomBookings);
         }
 
-        bookingRepository.save(booking);
+        bookingRepository.save(savedBooking);
 
         // if payment is postpaid, send confirmation mail and sms to user and owner
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){

@@ -21,7 +21,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByHotelIdAndRoomTypeId(Long hotelId, Long roomTypeId, PageRequest of);
 
-    @Query("SELECT r FROM Room r WHERE r.hotel.id = :hotelId AND r.roomType.id = :roomTypeId AND r.roomNumber NOT IN :excludedRoomNumbers")
+    @Query("SELECT r FROM Room r WHERE r.hotel.id = :hotelId AND r.available=true AND r.roomType.id = :roomTypeId AND r.roomNumber NOT IN :excludedRoomNumbers")
     List<Room> findAvailableRooms(
             @Param("hotelId") Long hotelId,
             @Param("roomTypeId") Long roomTypeId,
