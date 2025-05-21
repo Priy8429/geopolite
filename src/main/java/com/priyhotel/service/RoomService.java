@@ -7,12 +7,14 @@ import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
 import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.mapper.RoomMapper;
+import com.priyhotel.repository.BookingRepository;
 import com.priyhotel.repository.HotelRepository;
 import com.priyhotel.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,9 @@ public class RoomService {
     private AssetService assetService;
 
     @Autowired RoomTypeService roomTypeService;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     @Autowired
     private RoomMapper roomMapper;
@@ -83,6 +88,20 @@ public class RoomService {
 
     public List<Room> getAvailableRoomsByHotel(Long hotelId) {
         return roomRepository.findByHotelIdAndAvailable(hotelId, true);
+    }
+
+    public List<Room> getAllRoomsByHotelWithAvailableStatus(Long hotelId){
+        LocalDate today = LocalDate.now();
+        List<Room> allRooms = roomRepository.findByHotelId(hotelId);
+        List<String> alreadyBookedRoomNumbers = this.getAlreadyBookedRoomNumbers(hotelId, today, today.plusDays(1));
+        return allRooms.stream().map(room -> {
+            room.setAvailable(!alreadyBookedRoomNumbers.contains(room.getRoomNumber()));
+            return room;
+        }).toList();
+    }
+
+    public List<String> getAlreadyBookedRoomNumbers(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate){
+        return bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
     }
 
     public List<Room> findAvailableRoomsForRoomTypes(Long hotelId, List<RoomBookingDto> roomBookingDtos, List<String> alreadyBookedRooms) {

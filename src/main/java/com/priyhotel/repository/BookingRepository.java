@@ -36,7 +36,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN b.bookedRooms rb " +
             "WHERE b.hotel.id = :hotelId " +
             "AND (:checkInDate < b.checkOutDate AND :checkOutDate > b.checkInDate)" +
-            "AND rb.room.available=true " +
             "AND b.status = 'CONFIRMED'")
             List<String> findBookedRoomNumbers(
             @Param("hotelId") Long hotelId,

@@ -131,19 +131,20 @@ public class BookingService {
             booking.setPaymentType(bookingRequestDto.getPaymentType());
         }
 
-        if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
-            booking.setStatus(BookingStatus.CONFIRMED);
-            List<RoomBooking> roomBookings = this.bookRooms(availableRooms, booking);
-            booking.setBookedRooms(roomBookings);
-            saveBookedRooms(roomBookings);
-        }
-
-
         Booking savedBooking = bookingRepository.save(booking);
 
         // save room booking requests
         List<RoomBookingRequest> roomBookingRequests = roomBookingMapper.toEntities(bookingRequestDto.getRoomBookingList(), booking);
         roomBookingRequestRepository.saveAll(roomBookingRequests);
+
+        if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
+            booking.setStatus(BookingStatus.CONFIRMED);
+            List<RoomBooking> roomBookings = this.bookRooms(availableRooms, savedBooking);
+            booking.setBookedRooms(roomBookings);
+            saveBookedRooms(roomBookings);
+        }
+
+        bookingRepository.save(booking);
 
         // if payment is postpaid, send confirmation mail and sms to user and owner
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
@@ -224,6 +225,10 @@ public class BookingService {
     public List<Room> getAvailableRooms(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate, List<RoomBookingDto> roomBookingDtos){
         List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
         return roomService.findAvailableRoomsForRoomTypes(hotelId, roomBookingDtos, alreadyBookedRoomNumbers);
+    }
+
+    public List<String> getAlreadyBookedRoomNumbers(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate){
+        return bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
     }
 
     public List<BookingResponseDto> getUserBookings(Long userId) {

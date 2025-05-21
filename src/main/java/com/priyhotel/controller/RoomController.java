@@ -53,4 +53,9 @@ public class RoomController {
     public ResponseEntity<List<Room>> getAvailableRooms(@PathVariable Long hotelId) {
         return ResponseEntity.ok(roomService.getAvailableRoomsByHotel(hotelId));
     }
+
+    @GetMapping("/hotel/available-status/{hotelId}")
+    public ResponseEntity<?> getAvailableRoomsWithStatus(@PathVariable Long hotelId){
+        return ResponseEntity.ok(roomService.getAllRoomsByHotelWithAvailableStatus(hotelId));
+    }
 }

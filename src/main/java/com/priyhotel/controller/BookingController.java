@@ -2,6 +2,7 @@ package com.priyhotel.controller;
 
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
+import com.priyhotel.entity.Room;
 import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -109,4 +111,5 @@ public class BookingController {
     public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam LocalDate newCheckoutDate){
         return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
     }
+
 }

@@ -66,6 +66,7 @@ public class AssetService {
             Path filePath = Paths.get(dirPath, fileName);
 
             // Save file to the directory
+            System.out.println("FFFFFFFFFFFFFFull PPPPPath: "+filePath);
             Files.write(filePath, file.getBytes());
 
             // Return relative path for storage
@@ -77,13 +78,21 @@ public class AssetService {
 
     public boolean deleteAsset(String fileUrl) {
         try {
-            File file = new File(fileUrl);
-
-            if (file.exists()) {
-                return file.delete(); // returns true if deletion was successful
+            Path filePath = Paths.get(fileUrl);
+            if(Files.exists(filePath)){
+                Files.delete(filePath);
+                return true;
             } else {
                 throw new FileNotFoundException("File not found: " + fileUrl);
             }
+
+//            File file = new File(fileUrl);
+//
+//            if (file.exists()) {
+//                return file.delete(); // returns true if deletion was successful
+//            } else {
+//                throw new FileNotFoundException("File not found: " + fileUrl);
+//            }
         } catch (IOException e) {
             throw new RuntimeException("Error deleting file", e);
         }
