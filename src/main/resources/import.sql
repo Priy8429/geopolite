@@ -1,19 +1,28 @@
 --basic amenities
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (1, 'Attached bathroom', null, 'Attached bathroom');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (2, 'Luggage storage', null, 'Luggage storage');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (3, 'Cotton linens', null, 'Cotton linens');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (4, 'Air conditioning', null, 'Air conditioning');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (5, 'Designated sitting area with table and chair', null, 'Designated sitting area with table and chair');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (6, 'Bottled water', null, 'Bottled water');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (7, 'Toiletries', null, 'Toiletries');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (8, 'Larger room size', null, 'Larger room size');
-INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (9, 'Working desk', null, 'Working desk');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (1, 'Comfortable double bed with fresh cotton linens', null, 'Bedding');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (2, 'Attached private bathroom with western toilet', null, 'Attached bathroom');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (3, '24/7 hot & cold water', null, 'Drinking water');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (4, 'High-speed Wi-Fi', null, 'Wifi');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (5, 'LED TV with cable', null, 'TV');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (6, 'Luggage space and basic furnishings', null, 'Storage');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (7, 'Ceiling fan', null, 'Fan');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (8, 'Air-conditioned room', null, 'AC');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (9, 'Sitting area with chairs and table', null, 'Sitting area');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (10, 'Complimentary bottled water', null, 'Bottled water');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (11, 'Toiletries (soap, shampoo)', null, 'Toiletries');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (12, 'Enhanced interior lighting', null, 'Enhanced lighting');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (13, 'Larger floor space', null, 'Larger space');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (14, 'Extra spacious layout', null, 'More larger space');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (15, 'Dedicated working desk', null, 'Working desk');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (16, 'Additional lighting and outlets', null, 'Additional lighting');
+INSERT INTO amenities (id, amenity_description, amenity_icon_url, amenity_name) VALUES (17, 'Closet storage', null, 'Closet');
+
 
 ALTER TABLE amenities ALTER COLUMN id RESTART WITH 10;
 --room types
-INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (1, 'Non-AC Room', 'Comfortable and functional, ideal for a simple and bidget-friendly stay.', 2, 1, 2500, null);
-INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (2, 'Deluxe Room', 'Thoughtfully designed with added comfort and convenience for a relaxing experience.', 2, 1, 3500, null);
-INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (3, 'Executive Room', 'Spacious and well-equipped, perfect for business travelers seeking extra comfort and functionality.', 2, 1, 4000, null);
+INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (1, 'Non-AC Room', 'Simple, clean, and budget-friendly—perfect for short stays or solo travelers seeking essential comfort.', 2, 1, 2500, 152);
+INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (2, 'Deluxe Room', 'Upgrade your experience with added comfort and convenience, ideal for couples or longer stays.', 2, 1, 3500, 161);
+INSERT INTO room_types (id, type_name, description, capacity_adult, capacity_child, price_per_night, room_size_in_square_feet) VALUES (3, 'Executive Room', 'Our most spacious option with work-friendly features—perfect for business travelers or families.', 2, 1, 4000, 321);
 
 ALTER TABLE room_types ALTER COLUMN id RESTART WITH 4;
 
@@ -27,16 +36,34 @@ INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (2, 3);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (3, 1);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (3, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (3, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (4, 1);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (4, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (4, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (5, 1);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (5, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (5, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (6, 1);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (6, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (6, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (7, 1);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (7, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (7, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (8, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (8, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (9, 2);
 INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (9, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (10, 2);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (10, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (11, 2);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (11, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (12, 2);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (12, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (13, 2);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (13, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (14, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (15, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (16, 3);
+INSERT INTO room_type_amenities(amenity_id, room_type_id) VALUES (17, 3);
 
 --user
 INSERT INTO users(id, name, email, password, contact_number, role) VALUES (1, 'admin', 'admin@gmail.com', '$2a$10$gyOmCX4.JZR1xw3rfb5IA.E9W7OiXJArX71fvKeJkBzz77cteSsb2', '1234567890', 'ADMIN');
@@ -51,7 +78,7 @@ INSERT INTO locations(id, city, state, country) VALUES (1, 'Mumbai', 'Maharashtr
 ALTER TABLE locations ALTER COLUMN id RESTART WITH 2;
 
 --hotel
-INSERT INTO hotels(id, location_id, name, email, contact_number, address) VALUES (1, 1, 'Hotel Pride', '', '9819914047', 'Hotel Pride, Lbs Marg, Rs, Dreams Mall Rd, next to icici bank, Bhandup West, Mumbai, Maharashtra 400078');
+INSERT INTO hotels(id, location_id, name, email, contact_number, address) VALUES (1, 1, 'Hotel Pride', 'reservation@hotelpride.com', '9819914047', 'Hotel Pride, Lbs Marg, Rs, Dreams Mall Rd, next to icici bank, Bhandup West, Mumbai, Maharashtra 400078');
 
 ALTER TABLE hotels ALTER COLUMN id RESTART WITH 2;
 
@@ -70,9 +97,9 @@ INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (5,
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (6, 1, '106', 1, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (7, 1, '107', 1, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (8, 1, '108', 1, 1);
-INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (9, 1, '109', 1, 1);
-INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (10, 1, '110', 1, 1);
-INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (11, 1, '111', 1, 1);
+--INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (9, 1, '109', 1, 1);
+--INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (10, 1, '110', 1, 1);
+--INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (11, 1, '111', 1, 1);
 
 --for room type 2
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (12, 1, '201', 2, 1);
@@ -86,6 +113,10 @@ INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (19
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (20, 1, '209', 2, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (21, 1, '210', 2, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '211', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '212', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '213', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '214', 2, 1);
+INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (22, 1, '215', 2, 1);
 
 --for room type 3
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (23, 1, '301', 3, 1);
@@ -98,7 +129,7 @@ INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (29
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (30, 1, '308', 3, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (31, 1, '309', 3, 1);
 INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (32, 1, '310', 3, 1);
-INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (33, 1, '311', 3, 1);
+--INSERT INTO rooms(id, hotel_id, room_number, room_type_id, available) VALUES (33, 1, '311', 3, 1);
 
 
 ALTER TABLE rooms ALTER COLUMN id RESTART WITH 34;

@@ -3,6 +3,7 @@ package com.priyhotel.mapper;
 import com.priyhotel.dto.RoomTypeAvailabilityResponse;
 import com.priyhotel.dto.RoomTypeDto;
 import com.priyhotel.dto.RoomTypeRequestDto;
+import com.priyhotel.entity.Amenity;
 import com.priyhotel.entity.RoomType;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ public class RoomTypeMapper {
                 .offerDiscountPercentage(roomType.getOfferDiscountPercentage())
                 .description(roomType.getDescription())
                 .roomSizeInSquareFeet(roomType.getRoomSizeInSquareFeet())
-                .amenities(roomType.getAmenities())
+                .amenities(roomType.getAmenities().stream().map(Amenity::getAmenityDescription).toList())
                 .assets(roomType.getAssets())
                 .build();
     }

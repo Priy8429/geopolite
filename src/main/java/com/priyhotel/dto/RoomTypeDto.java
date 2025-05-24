@@ -33,7 +33,7 @@ public class RoomTypeDto {
 
     private Integer roomSizeInSquareFeet;
 
-    private List<Amenity> amenities;
+    private List<String> amenities;
 
     private List<Asset> assets;
 }
