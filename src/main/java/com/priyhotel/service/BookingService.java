@@ -125,6 +125,10 @@ public class BookingService {
         booking.setPayableAmount(bookingRequestDto.getPayableAmount());
         booking.setStatus(BookingStatus.PENDING);
 
+        if(Objects.isNull(bookingRequestDto.getBookingSource())){
+            booking.setBookingSource("OWN");
+        }
+
         if(Objects.isNull(bookingRequestDto.getPaymentType())){
             booking.setPaymentType(PaymentType.POSTPAID);
         }else{

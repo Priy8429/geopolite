@@ -27,5 +27,6 @@ public class BookingRequestDto {
     private PaymentType paymentType;
     private Double totalAmount;
     private Double payableAmount;
+    private String bookingSource;
     private List<RoomBookingDto> roomBookingList;
 }

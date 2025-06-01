@@ -29,6 +29,7 @@ public class BookingDto {
     private Integer noOfAdults;
     private Integer noOfChildrens;
     private List<RoomBooking> bookedRooms;
+    private String bookingSource;
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
 }

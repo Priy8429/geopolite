@@ -40,6 +40,8 @@ public class BookingResponseDto {
 
     private List<RoomDto> rooms;
 
+    private String bookingSource;
+
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
 
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
