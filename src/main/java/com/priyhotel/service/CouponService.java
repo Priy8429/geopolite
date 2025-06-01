@@ -1,6 +1,8 @@
 package com.priyhotel.service;
 
 import com.priyhotel.entity.Coupon;
+import com.priyhotel.exception.BadRequestException;
+import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.repository.CouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,14 @@ public class CouponService {
 
     public Coupon validateCoupon(String code, double orderAmount) {
         Coupon coupon = couponRepository.findByCodeIgnoreCaseAndActiveTrue(code)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired coupon"));
+                .orElseThrow(() -> new BadRequestException("Invalid or expired coupon"));
 
         if (coupon.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Coupon expired");
+            throw new BadRequestException("Coupon expired");
         }
 
         if (orderAmount < coupon.getMinOrderAmount()) {
-            throw new RuntimeException("Minimum order amount not met");
+            throw new BadRequestException("Minimum order amount not met");
         }
 
         return coupon;
@@ -38,7 +40,6 @@ public class CouponService {
         if (coupon.getDiscountAmount() > 0) {
             return Math.max(0, orderAmount - coupon.getDiscountAmount());
         } else if (coupon.getDiscountPercentage() > 0) {
-            double discountAmount;
             double discountAmountByPercentage = (orderAmount * coupon.getDiscountPercentage() / 100);
             return orderAmount - Math.min(coupon.getMaxDiscountAmount(), discountAmountByPercentage);
         }
@@ -51,7 +52,7 @@ public class CouponService {
             coupon.get().setActive(false);
             couponRepository.save(coupon.get());
         }else{
-            throw new RuntimeException("Coupon does not exist");
+            throw new ResourceNotFoundException("Coupon does not exist");
         }
     }
 
@@ -61,17 +62,13 @@ public class CouponService {
             coupon.get().setActive(true);
             couponRepository.save(coupon.get());
         }else{
-            throw new RuntimeException("Coupon does not exist");
+            throw new ResourceNotFoundException("Coupon does not exist");
         }
     }
 
     public Coupon getCouponByCouponCode(String couponCode){
-        Optional<Coupon> coupon = couponRepository.findByCodeIgnoreCase(couponCode);
-        if(coupon.isPresent()){
-            return coupon.get();
-        }else{
-            throw new RuntimeException("Coupon not  found!");
-        }
+        return couponRepository.findByCodeIgnoreCase(couponCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found"));
     }
 
     public List<Coupon> getAllCoupons() {

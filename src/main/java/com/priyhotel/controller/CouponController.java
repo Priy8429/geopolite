@@ -40,12 +40,9 @@ public class CouponController {
 
     @PostMapping("/deactivate")
     public ResponseEntity<?> deactivateCoupon(@RequestParam String couponCode) {
-        try {
             couponService.markInactive(couponCode);
             return ResponseEntity.ok(true);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+
     }
 
     @PostMapping("/activate")

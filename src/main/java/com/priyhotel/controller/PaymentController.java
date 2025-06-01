@@ -1,9 +1,15 @@
 package com.priyhotel.controller;
 
+import com.priyhotel.dto.PaymentVerifyRequestDto;
+import com.priyhotel.entity.Booking;
+import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.PaymentService;
 import com.razorpay.RazorpayException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -12,14 +18,17 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @Autowired
+    BookingMapper bookingMapper;
+
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestParam double amount, @RequestParam Long bookingId) {
+    public ResponseEntity<String> createOrder(@RequestParam String bookingNumber) {
         try {
-            String order = paymentService.createOrder(amount, bookingId);
+            String order = paymentService.createOrder(bookingNumber);
             return ResponseEntity.ok(order);
         } catch (RazorpayException e) {
             return ResponseEntity.status(500).body("Error creating order: " + e.getMessage());
@@ -27,17 +36,20 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyPayment(
-            @RequestParam String paymentId,
-            @RequestParam String orderId,
-            @RequestParam String signature) {
-        boolean isVerified = paymentService.verifyAndSavePayment(paymentId, orderId, signature);
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerifyRequestDto paymentVerifyRequestDto) {
+        Booking booking = paymentService.verifyAndSavePayment(paymentVerifyRequestDto);
 
-        if (isVerified) {
-            return ResponseEntity.ok("Payment verified successfully.");
+        if (Objects.nonNull(booking)) {
+            return ResponseEntity.ok(bookingMapper.toDto(booking));
         } else {
             return ResponseEntity.status(400).body("Payment verification failed.");
         }
+    }
+
+    @PostMapping("/failure")
+    public ResponseEntity<?> handlePaymentFailure(@RequestParam String orderId){
+        paymentService.handlePaymentFailure(orderId);
+        return ResponseEntity.ok("Payment cancelled");
     }
 
 }

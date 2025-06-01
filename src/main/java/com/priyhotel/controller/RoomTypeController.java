@@ -1,6 +1,7 @@
 package com.priyhotel.controller;
 
 import com.priyhotel.constants.Constants;
+import com.priyhotel.dto.OffersUpdateDto;
 import com.priyhotel.dto.RoomTypeRequestDto;
 import com.priyhotel.entity.Asset;
 import com.priyhotel.entity.RoomType;
@@ -29,6 +30,11 @@ public class RoomTypeController {
         return ResponseEntity.ok(roomTypeService.getAllRoomTypes());
     }
 
+    @GetMapping("/hotel/{hotelId}")
+    public ResponseEntity<?> getRoomTypesByHotel(@PathVariable Long hotelId){
+        return ResponseEntity.ok(roomTypeService.getRoomTypesByHotelId(hotelId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RoomType> getRoomTypeById(@PathVariable Long id){
         return ResponseEntity.ok(roomTypeService.getRoomTypeById(id));
@@ -39,7 +45,7 @@ public class RoomTypeController {
         return ResponseEntity.ok(roomTypeService.addRoomType(roomTypeRequestDto));
     }
 
-    @PutMapping("/{roomTypeId}")
+    @PatchMapping("/{roomTypeId}")
     public ResponseEntity<RoomType> updateRoomType(@PathVariable Long roomTypeId, @RequestBody RoomTypeRequestDto roomTypeRequestDto){
         return ResponseEntity.ok(roomTypeService.updateRoomType(roomTypeId, roomTypeRequestDto));
     }
@@ -52,5 +58,15 @@ public class RoomTypeController {
     @PostMapping("/assets/upload")
     public ResponseEntity<List<Asset>> uploadAssets(@RequestParam("files") List<MultipartFile> files){
         return ResponseEntity.ok(assetService.uploadAssets(files, Constants.ROOM_TYPE_DIR_NAME));
+    }
+
+    @DeleteMapping("/assets/remove")
+    public ResponseEntity<?> removeAsset(@RequestParam Long assetId){
+        return ResponseEntity.ok(assetService.removeAsset(assetId));
+    }
+
+    @PatchMapping("/update-offers")
+    public ResponseEntity<?> updateOffers(@RequestBody OffersUpdateDto offersUpdateDto){
+        return ResponseEntity.ok(roomTypeService.updateOffers(offersUpdateDto));
     }
 }

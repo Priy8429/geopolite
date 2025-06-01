@@ -1,15 +1,21 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.constants.PaymentStatus;
+import com.priyhotel.dto.PaymentVerifyRequestDto;
+import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Payment;
-import com.priyhotel.entity.User;
-import com.priyhotel.repository.BookingRepository;
+import com.priyhotel.entity.RoomBooking;
+import com.priyhotel.entity.RoomBookingRequest;
+import com.priyhotel.exception.ResourceNotFoundException;
+import com.priyhotel.mapper.RoomBookingMapper;
 import com.priyhotel.repository.PaymentRepository;
-import com.priyhotel.repository.UserRepository;
-import com.priyhotel.util.PDFGenerator;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
+import jakarta.transaction.Transactional;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +26,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class PaymentService {
@@ -35,72 +41,105 @@ public class PaymentService {
     private String currency;
 
     @Autowired
-    UserRepository userRepository;
+    PaymentRepository paymentRepository;
 
     @Autowired
-    PDFGenerator pdfGenerator;
+    BookingService bookingService;
 
-    private final PaymentRepository paymentRepository;
-    private final BookingRepository bookingRepository;
-    private final EmailService emailService;
+    @Autowired
+    EmailService emailService;
 
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, EmailService emailService) {
-        this.paymentRepository = paymentRepository;
-        this.bookingRepository = bookingRepository;
-        this.emailService = emailService;
-    }
+    @Autowired
+    RoomBookingMapper roomBookingMapper;
 
-    public String createOrder(double amount, Long bookingId) throws RazorpayException {
+    @Transactional
+    public String createOrder(String bookingNumber) throws RazorpayException {
         RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
 
         // Link order with a booking
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
+        Booking booking = bookingService.getBookingByBookingNumber(bookingNumber);
 
-        double validatedAmount = calculateAmount(booking.get());
+//        double validatedAmount = bookingService.calculateBookingAmount(
+//                booking.getCheckInDate(), booking.getCheckOutDate(), booking.getBookedRooms());
+//
+//        if(booking.getTotalAmount() != validatedAmount){
+//            throw new BadRequestException("Discrepancy in booking amount");
+//        }
 
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", (int) (amount * 100)); // Amount in paise
+        orderRequest.put("amount", (int) (booking.getPayableAmount() * 100)); // Amount in paise
         orderRequest.put("currency", currency);
-        orderRequest.put("receipt", "txn_123456");
+        orderRequest.put("receipt", "txn_" + System.currentTimeMillis());
 
         Order order = razorpay.orders.create(orderRequest);
 
         Payment payment = new Payment();
         payment.setRazorpayOrderId(order.get("id"));
-        payment.setAmount(amount);
-        payment.setStatus("PENDING");
+//        payment.setRazorpayOrderId(UUID.randomUUID().toString());
+//        payment.setRazorpayPaymentId(UUID.randomUUID().toString());
+        payment.setAmount(booking.getTotalAmount());
+        payment.setStatus(PaymentStatus.PENDING);
         payment.setPaymentDate(LocalDateTime.now());
-        payment.setBooking(booking.get());
+        payment.setBooking(booking);
         paymentRepository.save(payment);
+
+        // reserve rooms
+//        List<RoomBookingRequest> roomBookingRequestList = bookingService.getBookingRoomRequestsByBookingId(booking.getId());
+//        List<RoomBookingDto> roomBookingDtos = roomBookingMapper.toDtos(roomBookingRequestList);
+//        List<RoomBooking> bookedRooms = bookingService.bookRooms(
+//                bookingService.getAvailableRooms(booking.getHotel().getId(), booking.getCheckInDate(), booking.getCheckOutDate(),roomBookingDtos)
+//                , booking
+//        );
+//        booking.setBookedRooms(bookedRooms);
+//        bookingService.saveBooking(booking);
+
+        bookingService.reserveRooms(booking);
+
         return order.toString();
+//        return "order created";
     }
 
     // Verify and Save Payment
-    public boolean verifyAndSavePayment(String paymentId, String orderId, String signature) {
+    @Transactional
+    public Booking verifyAndSavePayment(PaymentVerifyRequestDto paymentVerifyRequestDto) {
         try {
-            String payload = orderId + "|" + paymentId;
-            String generatedSignature = HmacSHA256(payload, apiSecret);
+            String payload = paymentVerifyRequestDto.getOrderId() + "|" + paymentVerifyRequestDto.getPaymentId();
+//            String generatedSignature = HmacSHA256(payload, apiSecret);
+            Utils.verifySignature(payload, paymentVerifyRequestDto.getSignature(), apiSecret);
+//            if (generatedSignature.equals(signature)) {
+                Payment payment = paymentRepository.findByRazorpayOrderId(paymentVerifyRequestDto.getOrderId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
-            if (generatedSignature.equals(signature)) {
-                Payment payment = paymentRepository.findByRazorpayOrderId(orderId)
-                        .orElseThrow(() -> new RuntimeException("Payment not found"));
-
-                payment.setRazorpayPaymentId(paymentId);
-                payment.setStatus("SUCCESS");
+                payment.setRazorpayPaymentId(paymentVerifyRequestDto.getPaymentId());
+                payment.setStatus(PaymentStatus.PAID);
                 payment.setPaymentDate(LocalDateTime.now());
                 paymentRepository.save(payment);
 
-                // Generate PDF Invoice
-                byte[] pdfInvoice = pdfGenerator.generateInvoice(payment);
+                //update booking status
+                bookingService.updateBookingStatus(payment.getBooking().getBookingNumber(), BookingStatus.CONFIRMED);
 
                 // Send Payment Confirmation Email
-                sendPaymentConfirmationEmail(payment, pdfInvoice);
-                return true;
-            }
+                emailService.sendPaymentConfirmationEmailToUser(payment.getBooking(), payment);
+                emailService.sendPaymentConfirmationEmailToOwner(payment.getBooking(), payment);
+
+                // Send payment confirmation sms
+//                smsService.sendPaymentConfirmationSmsToUser(payment);
+//                  smsService.sendPaymentConfirmationSmsToOwner(payment);
+                return payment.getBooking();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return false;
+
+    }
+
+    public void handlePaymentFailure(String orderId){
+        Payment payment = paymentRepository.findByRazorpayOrderId(orderId).orElseThrow(
+                () -> new ResourceNotFoundException("Payment  not found with orderId: " + orderId));
+        payment.setStatus(PaymentStatus.FAILED);
+        paymentRepository.save(payment);
+        bookingService.removeBookedRooms(payment.getBooking());
     }
 
     // HMAC SHA256 Helper Method
@@ -109,29 +148,6 @@ public class PaymentService {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256Hmac.init(secretKey);
         return Base64.getEncoder().encodeToString(sha256Hmac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    private void sendPaymentConfirmationEmail(Payment payment, byte[] pdfInvoice) {
-        User user = payment.getBooking().getUser();
-        String email = user.getEmail();
-        String subject = "Payment Confirmation - Booking #" + payment.getBooking().getId();
-
-        String content = "<h2>Dear " + user.getName() + ",</h2>"
-                + "<p>Your payment of <strong>₹" + payment.getAmount() + "</strong> has been successfully received.</p>"
-                + "<p><strong>Booking ID:</strong> " + payment.getBooking().getId() + "</p>"
-                + "<p><strong>Payment ID:</strong> " + payment.getRazorpayPaymentId() + "</p>"
-                + "<p><strong>Status:</strong> " + payment.getStatus() + "</p>"
-                + "<p>Thank you for choosing our hotel!</p>"
-                + "<br>"
-                + "<p>Best Regards,</p>"
-                + "<p>Hotel Management</p>";
-
-        emailService.sendPaymentConfirmation(email, subject, content, pdfInvoice);
-    }
-
-    private double calculateAmount(Booking booking) {
-        long days = java.time.temporal.ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
-        return booking.getRoom().getRoomType().getPricePerNight() * days;
     }
 
 }

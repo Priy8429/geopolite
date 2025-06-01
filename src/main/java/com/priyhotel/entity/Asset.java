@@ -18,6 +18,5 @@ public class Asset {
 
     private String assetThumbUrl;
 
-    @Enumerated(EnumType.STRING)
-    private AssetType assetType;
+    private String assetType;
 }

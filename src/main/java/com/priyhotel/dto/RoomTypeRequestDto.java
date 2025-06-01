@@ -9,15 +9,15 @@ public class RoomTypeRequestDto {
 
     private String typeName;
 
-    private int capacityAdult;
+    private Integer capacityAdult;
 
-    private int capacityChild;
+    private Integer capacityChild;
 
-    private double pricePerNight;
+    private Double pricePerNight;
 
     private String description;
 
-    private int roomSizeInSquareFeet;
+    private Integer roomSizeInSquareFeet;
 
     private List<Long> amenityIds;
 

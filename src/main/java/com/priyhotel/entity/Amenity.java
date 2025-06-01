@@ -14,10 +14,8 @@ public class Amenity {
 
     private String amenityName;
 
-    private String amenityIconUrl;
+    private String amenityDescription;
 
-    @ManyToOne
-    @JoinColumn(name = "room_type_id")
-    private RoomType roomType;
+    private String amenityIconUrl;
 
 }

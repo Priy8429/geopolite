@@ -5,6 +5,7 @@ import com.priyhotel.entity.Asset;
 import com.priyhotel.entity.Hotel;
 import com.priyhotel.entity.Location;
 import com.priyhotel.entity.RoomType;
+import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.mapper.HotelMapper;
 import com.priyhotel.repository.HotelRepository;
 import com.priyhotel.repository.LocationRepository;
@@ -21,7 +22,7 @@ public class HotelService {
     HotelRepository hotelRepository;
 
     @Autowired
-    LocationRepository locationRepository;
+    LocationService locationService;
 
     @Autowired
     AssetService assetService;
@@ -38,22 +39,21 @@ public class HotelService {
 
     public Hotel getHotelById(Long id) {
         return hotelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hotel not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found!"));
     }
 
     public List<Hotel> getHotelsByLocation(Long locationId) {
-        Optional<Location> location = locationRepository.findById(locationId);
-        if(location.isPresent()){
-            return hotelRepository.findByLocation(location.get());
-        }else{
-            throw new RuntimeException("Invalid location");
-        }
+        Location location = locationService.getLocationById(locationId);
+        return hotelRepository.findByLocation(location);
+    }
 
+    public Hotel getReferenceById(Long id){
+        return hotelRepository.getReferenceById(id);
     }
 
     public Hotel addHotel(HotelRequestDto hotelRequestDto) {
-        Location location = locationRepository.findById(hotelRequestDto.getLocationId())
-                .orElseThrow(() -> new RuntimeException("Location not found!"));
+
+        Location location = locationService.getLocationById(hotelRequestDto.getLocationId());
 
         List<Asset> assets = assetService.getAllAssetsByIds(hotelRequestDto.getAssetIds());
         List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds(hotelRequestDto.getRoomTypeIds());
@@ -65,24 +65,31 @@ public class HotelService {
         return hotelRepository.save(newHotel);
     }
 
-    public Hotel updateHotel(Long id, HotelRequestDto hotelRequestDto) {
-        Location location = locationRepository.findById(hotelRequestDto.getLocationId())
-                .orElseThrow(() -> new RuntimeException("Location not found!"));
+    public Hotel updateHotel(Long id, HotelRequestDto dto){
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found"));
 
-        List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds(hotelRequestDto.getRoomTypeIds());
-        List<Asset> assets = assetService.getAllAssetsByIds(hotelRequestDto.getAssetIds());
-        return hotelRepository.findById(id)
-                .map(hotel -> {
-                    hotel.setName(hotelRequestDto.getHotelName());
-                    hotel.setLocation(location);
-                    hotel.setAddress(hotelRequestDto.getHotelFullAddress());
-                    hotel.setContactNumber(hotelRequestDto.getHotelPhoneNumber());
-                    hotel.setEmail(hotelRequestDto.getHotelEmail());
-                    hotel.setRoomTypes(roomTypes);
-                    hotel.setAssets(assets);
-                    return hotelRepository.save(hotel);
-                })
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+        if (dto.getHotelName()!= null) hotel.setName(dto.getHotelName());
+        if (dto.getHotelFullAddress() != null) hotel.setAddress(dto.getHotelFullAddress());
+        if (dto.getHotelPhoneNumber() != null) hotel.setContactNumber(dto.getHotelPhoneNumber());
+        if (dto.getHotelEmail() != null) hotel.setEmail(dto.getHotelEmail());
+
+        if (dto.getLocationId() != null) {
+            Location location = locationService.getLocationById(dto.getLocationId());
+            hotel.setLocation(location);
+        }
+
+        if (dto.getRoomTypeIds() != null) {
+            List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds((dto.getRoomTypeIds()));
+            hotel.setRoomTypes(roomTypes);
+        }
+
+        if (dto.getAssetIds() != null) {
+            List<Asset> assets = assetService.getAllAssetsByIds(dto.getAssetIds());
+            hotel.setAssets(assets);
+        }
+
+        return hotelRepository.save(hotel);
     }
 
     public void deleteHotel(Long id) {
@@ -90,9 +97,8 @@ public class HotelService {
     }
 
     public void addRoomTypesToHotel(Long hotelId, List<Long> roomTypeIds) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-
+        Hotel hotel = this.getHotelById(hotelId)
+;
         List<RoomType> roomTypes = roomTypeService.getRoomTypesByIds(roomTypeIds);
         hotel.getRoomTypes().addAll(roomTypes);
 
@@ -100,8 +106,8 @@ public class HotelService {
     }
 
     public List<RoomType> getRoomTypesForHotel(Long hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+        Hotel hotel = this.getHotelById(hotelId);
         return hotel.getRoomTypes();
     }
+
 }

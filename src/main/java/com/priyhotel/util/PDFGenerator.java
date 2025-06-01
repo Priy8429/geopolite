@@ -3,16 +3,18 @@ package com.priyhotel.util;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Payment;
+import com.priyhotel.entity.RoomBooking;
 import com.priyhotel.entity.User;
 import com.priyhotel.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,17 +23,18 @@ public class PDFGenerator {
     @Autowired
     UserRepository userRepository;
 
-    public byte[] generateInvoice(Payment payment) {
+    public byte[] generateInvoice(Booking booking, Payment payment) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4);
             PdfWriter writer = PdfWriter.getInstance(document, out);
             document.open();
 
             // Add Hotel Logo
-            Image logo = Image.getInstance("src/main/resources/static/logo.png"); // Update path
-            logo.scaleAbsolute(100, 50);
-            logo.setAlignment(Element.ALIGN_LEFT);
-            document.add(logo);
+//            Image logo = Image.getInstance(Objects.requireNonNull(getClass().getResource("/static/logo.png"))); // Update path
+
+//            logo.scaleAbsolute(100, 50);
+//            logo.setAlignment(Element.ALIGN_LEFT);
+//            document.add(logo);
 
             // Title
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
@@ -50,36 +53,72 @@ public class PDFGenerator {
             Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
             Font normalFont = new Font(Font.FontFamily.HELVETICA, 12);
 
-            User user = payment.getBooking().getUser();
+            User user = booking.getUser();
 
             addTableCell(table, "Booking ID:", boldFont);
-            addTableCell(table, String.valueOf(payment.getBooking().getId()), normalFont);
+            addTableCell(table, String.valueOf(booking.getBookingNumber()), normalFont);
             addTableCell(table, "Customer Name:", boldFont);
             addTableCell(table, user.getName(), normalFont);
             addTableCell(table, "Email:", boldFont);
             addTableCell(table, user.getEmail(), normalFont);
-            addTableCell(table, "Room Type:", boldFont);
-            addTableCell(table, String.valueOf(payment.getBooking().getRoom().getRoomType()), normalFont);
+//            addTableCell(table, "Room Type:", boldFont);
+//            addTableCell(table, String.valueOf(payment.getBooking().getRoom().getRoomType()), normalFont);
             addTableCell(table, "Check-in Date:", boldFont);
-            addTableCell(table, payment.getBooking().getCheckInDate().toString(), normalFont);
+            addTableCell(table, booking.getCheckInDate().toString(), normalFont);
             addTableCell(table, "Check-out Date:", boldFont);
-            addTableCell(table, payment.getBooking().getCheckOutDate().toString(), normalFont);
+            addTableCell(table, booking.getCheckOutDate().toString(), normalFont);
             addTableCell(table, "Total Amount:", boldFont);
-            addTableCell(table, "₹ " + payment.getAmount(), normalFont);
-            addTableCell(table, "Payment Status:", boldFont);
-            addTableCell(table, payment.getStatus(), normalFont);
+            addTableCell(table, "₹ " + booking.getTotalAmount(), normalFont);
+            addTableCell(table, "Payment Type:", boldFont);
+            addTableCell(table, booking.getPaymentType().toString(), normalFont);
 
             document.add(table);
 
+            if(Objects.nonNull(payment)){
+                Font subTitleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                Paragraph paymentTitle = new Paragraph("Payment details", subTitleFont);
+                document.add(paymentTitle);
+
+                PdfPTable paymentTable = new PdfPTable(2);
+                paymentTable.addCell("Payment status: ");
+                paymentTable.addCell(String.valueOf(payment.getStatus()));
+                paymentTable.addCell("Payment amount: ");
+                paymentTable.addCell(String.valueOf(booking.getTotalAmount()));
+                paymentTable.addCell("Discount amount: ");
+                paymentTable.addCell(String.valueOf(booking.getTotalAmount()-payment.getAmount()));
+                paymentTable.addCell("Total amount: ");
+                paymentTable.addCell(String.valueOf(payment.getAmount()));
+                document.add(paymentTable);
+            }
+
+
             // QR Code for Payment ID
-            Image qrCode = generateQRCode(payment.getRazorpayPaymentId());
-            qrCode.setAlignment(Element.ALIGN_CENTER);
-            qrCode.scaleAbsolute(100, 100);
-            document.add(new Paragraph("Scan to Verify Payment", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
-            document.add(qrCode);
+//            Image qrCode = generateQRCode(payment.getRazorpayPaymentId());
+//            qrCode.setAlignment(Element.ALIGN_CENTER);
+//            qrCode.scaleAbsolute(100, 100);
+//            document.add(new Paragraph("Scan to Verify Payment", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
+//            document.add(qrCode);
+
+            // Add Booked Rooms
+            PdfPTable roomTable = new PdfPTable(5);
+            table.addCell("Room Number");
+            table.addCell("Room Type");
+            table.addCell("No. of Adults");
+            table.addCell("No. of Childrens");
+            table.addCell("No. of Nights");
+
+            for (RoomBooking room : booking.getBookedRooms()) {
+                table.addCell(room.getRoom().getRoomNumber());
+                table.addCell(room.getRoom().getRoomType().getTypeName());
+//                table.addCell(String.valueOf(room.getNoOfAdults()));
+//                table.addCell(String.valueOf(room.getNoOfChilds()));
+                table.addCell(String.valueOf(room.getNoOfNights()));
+            }
+
+            document.add(roomTable);
 
             // Footer
-            document.add(new Paragraph("\n\nThank you for choosing our hotel!", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            document.add(new Paragraph("\n\nThank you for choosing Hotel Pride!", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
             document.add(new Paragraph("For any inquiries, contact us at support@hotel.com", new Font(Font.FontFamily.HELVETICA, 10)));
 
             document.close();

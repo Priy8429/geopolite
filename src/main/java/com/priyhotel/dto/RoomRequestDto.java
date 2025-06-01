@@ -10,6 +10,4 @@ public class RoomRequestDto {
     private boolean roomAvailable;
     private Long hotelId;
     private Long roomTypeId;
-    private List<Long> amenityIds;
-    private List<Long> assetIds;
 }

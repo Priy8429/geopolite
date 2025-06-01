@@ -1,5 +1,6 @@
 package com.priyhotel.entity;
 
+import com.priyhotel.constants.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,11 +18,11 @@ public class Payment {
     @Column(nullable = false, unique = true)
     private String razorpayOrderId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true)
     private String razorpayPaymentId;
 
     @Column(nullable = false)
-    private String status;
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private Double amount;
@@ -30,6 +31,6 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = true)
     private Booking booking;
 }

@@ -15,7 +15,7 @@ public class Review {
     private Long id;
 
     private String comment;
-    private int rating; // 1 to 5 stars
+    private Integer rating; // 1 to 5 stars
 
     @JsonIgnore
     @ManyToOne

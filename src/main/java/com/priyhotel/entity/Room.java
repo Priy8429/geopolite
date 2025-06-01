@@ -1,5 +1,7 @@
 package com.priyhotel.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,8 +21,9 @@ public class Room {
     private RoomType roomType;
 
     @Column(nullable = false)
-    private boolean available;
+    private Boolean available;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;

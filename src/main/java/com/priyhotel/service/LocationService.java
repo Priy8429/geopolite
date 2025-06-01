@@ -1,6 +1,7 @@
 package com.priyhotel.service;
 
 import com.priyhotel.entity.Location;
+import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class LocationService {
 
     public Location getLocationById(Long id) {
         return locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Location not found!"));
     }
 
     public Location addNewLocation(Location location) {
