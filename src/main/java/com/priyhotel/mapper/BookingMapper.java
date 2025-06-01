@@ -32,6 +32,7 @@ public class BookingMapper {
                 .noOfChildrens(booking.getNoOfChildrens())
                 .bookedRooms(booking.getBookedRooms())
                 .paymentType(booking.getPaymentType())
+                .bookingSource(booking.getBookingSource())
                 .status(booking.getStatus())
                 .build();
     }
@@ -53,6 +54,7 @@ public class BookingMapper {
                 .noOfChildrens(booking.getNoOfChildrens())
                 .rooms(booking.getBookedRooms() != null ? roomMapper.toDtosFromRoomBooking(booking.getBookedRooms()) : null)
                 .paymentType(booking.getPaymentType())
+                .bookingSource(booking.getBookingSource())
                 .status(booking.getStatus())
                 .build();
     }

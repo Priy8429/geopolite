@@ -108,7 +108,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingNumber}/update-checkout")
-    public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam LocalDate newCheckoutDate){
+    public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate newCheckoutDate){
         return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
     }
 
