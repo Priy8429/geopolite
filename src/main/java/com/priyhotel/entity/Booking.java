@@ -63,6 +63,9 @@ public class Booking {
 
     private String bookingSource;
 
+    @Column(nullable = true)
+    private String specialRequest;
+
     @JsonIgnore
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoomBooking> bookedRooms;

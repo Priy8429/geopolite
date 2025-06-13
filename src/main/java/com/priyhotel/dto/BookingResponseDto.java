@@ -42,6 +42,8 @@ public class BookingResponseDto {
 
     private String bookingSource;
 
+    private String specialRequest;
+
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
 
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED

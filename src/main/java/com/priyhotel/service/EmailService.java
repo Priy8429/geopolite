@@ -49,13 +49,17 @@ public class EmailService {
 
         content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
         if(Objects.nonNull(payment)){
             content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
                     .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
                     .append("</br>").append("</br>");
         }
-                content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
+        if(Objects.nonNull(booking.getSpecialRequest())){
+            content.append("<p><strong>Special request: </strong> ").append(booking.getSpecialRequest()).append("</p>").append("</br>");
+        }
+                content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
@@ -90,13 +94,18 @@ public class EmailService {
         StringBuilder content =  new StringBuilder();
         content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
+                .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
+
         if(Objects.nonNull(payment)){
             content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
                     .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
                     .append("</br>").append("</br>");
         }
-        content.append("<p><strong>Status:</strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
+        if(Objects.nonNull(booking.getSpecialRequest())){
+            content.append("<p><strong>Special request: </strong> ").append(booking.getSpecialRequest()).append("</p>").append("</br>");
+        }
+        content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
