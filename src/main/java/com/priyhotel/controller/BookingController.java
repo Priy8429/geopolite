@@ -5,6 +5,7 @@ import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Room;
 import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
+import com.razorpay.Refund;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,18 @@ public class BookingController {
     }
 
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id) {
+        try{
+            BookingResponseDto response = bookingService.cancelBooking(id);
+            return ResponseEntity.ok("Your refund has been initiated!");
+        }catch (Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+
     }
 
     @PostMapping("/request")
@@ -103,8 +114,8 @@ public class BookingController {
     }
 
     @GetMapping("/upcoming")
-    public ResponseEntity<?> getOnwardBookings(@RequestParam Long hotelId){
-        return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId));
+    public ResponseEntity<?> getOnwardBookings(@RequestParam Long hotelId, @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize){
+        return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId, pageNumber, pageSize));
     }
 
     @PatchMapping("/{bookingNumber}/update-checkout")

@@ -3,13 +3,15 @@ package com.priyhotel.entity;
 import com.priyhotel.constants.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "payments")
-public class Payment {
+public class Payment extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +24,7 @@ public class Payment {
     private String razorpayPaymentId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
     @Column(nullable = false)

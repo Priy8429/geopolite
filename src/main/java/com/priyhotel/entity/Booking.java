@@ -5,6 +5,7 @@ import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,9 +13,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name="bookings")
-public class Booking {
+public class Booking extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -74,5 +76,5 @@ public class Booking {
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
+    private BookingStatus status; // CONFIRMED, CANCELLED, PENDING
 }

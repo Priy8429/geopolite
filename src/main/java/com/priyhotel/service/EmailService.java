@@ -32,6 +32,9 @@ public class EmailService {
     @Value("${notification.destination.email}")
     private String sendToEmail;
 
+//    @Value("${SMTP_PASS}")
+//    private String smtpPass;
+
     private final String dateFormat = "dd-MM-yyyy";
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
 
@@ -40,7 +43,6 @@ public class EmailService {
 
         // Generate PDF Invoice
 //        byte[] pdfInvoice = pdfGenerator.generateInvoice(booking, payment);
-
         User user = booking.getUser();
         String email = user.getEmail();
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";

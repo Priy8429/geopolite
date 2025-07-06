@@ -27,6 +27,7 @@ com\priyhotel\dto\OffersUpdateDto$OffersUpdateDtoBuilder.class
 com\priyhotel\constants\BookingStatus.class
 com\priyhotel\controller\CouponController.class
 com\priyhotel\entity\RoomType.class
+com\priyhotel\entity\Audit.class
 com\priyhotel\repository\UserRepository.class
 com\priyhotel\repository\RoomRepository.class
 com\priyhotel\entity\Hotel.class

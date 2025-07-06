@@ -1,6 +1,8 @@
 package com.priyhotel.repository;
 
+import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.entity.Booking;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,4 +61,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findOnwardBookings(@Param("hotelId") Long hotelId);
 
     Booking getBookingByBookingNumber(String bookingNumber);
+
+    List<Booking> getBookingsByStatusAndHotelId(BookingStatus bookingStatus, Long hotelId);
+
+    List<Booking> getBookingsByStatusAndHotelId(BookingStatus bookingStatus, Long hotelId, Pageable pageable);
 }

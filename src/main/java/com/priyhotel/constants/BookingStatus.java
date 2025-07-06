@@ -1,5 +1,5 @@
 package com.priyhotel.constants;
 
 public enum BookingStatus {
-    PENDING, CONFIRMED, CANCELLED, COMPLETED
+    PENDING, CONFIRMED, CANCELLED
 }

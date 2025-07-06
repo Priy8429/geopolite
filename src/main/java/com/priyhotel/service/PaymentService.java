@@ -2,6 +2,7 @@ package com.priyhotel.service;
 
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentStatus;
+import com.priyhotel.constants.PaymentType;
 import com.priyhotel.dto.PaymentVerifyRequestDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.Booking;
@@ -11,10 +12,7 @@ import com.priyhotel.entity.RoomBookingRequest;
 import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.mapper.RoomBookingMapper;
 import com.priyhotel.repository.PaymentRepository;
-import com.razorpay.Order;
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
-import com.razorpay.Utils;
+import com.razorpay.*;
 import jakarta.transaction.Transactional;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +22,11 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -81,6 +81,8 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setPaymentDate(LocalDateTime.now());
         payment.setBooking(booking);
+        payment.setCreatedOn(LocalDate.now());
+        payment.setUpdatedOn(LocalDate.now());
         paymentRepository.save(payment);
 
         // reserve rooms
@@ -92,7 +94,6 @@ public class PaymentService {
 //        );
 //        booking.setBookedRooms(bookedRooms);
 //        bookingService.saveBooking(booking);
-
         bookingService.reserveRooms(booking);
 
         return order.toString();
@@ -113,10 +114,19 @@ public class PaymentService {
                 payment.setRazorpayPaymentId(paymentVerifyRequestDto.getPaymentId());
                 payment.setStatus(PaymentStatus.PAID);
                 payment.setPaymentDate(LocalDateTime.now());
+                payment.setUpdatedOn(LocalDate.now());
                 paymentRepository.save(payment);
+
+
 
                 //update booking status
                 bookingService.updateBookingStatus(payment.getBooking().getBookingNumber(), BookingStatus.CONFIRMED);
+
+                //for paylater option -> update payment type to prepaid
+                Booking booking = payment.getBooking();
+                booking.setPaymentType(PaymentType.PREPAID);
+                booking.setUpdatedOn(LocalDate.now());
+                bookingService.saveBooking(booking);
 
                 // Send Payment Confirmation Email
                 emailService.sendPaymentConfirmationEmailToUser(payment.getBooking(), payment);
@@ -134,10 +144,24 @@ public class PaymentService {
 
     }
 
+    public Refund initiateRefund(Booking booking) throws RazorpayException {
+        Optional<Payment> payment = paymentRepository.findByBooking(booking);
+        if(payment.isPresent()){
+            RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
+            JSONObject refundRequest = new JSONObject();
+            refundRequest.put("payment_id", payment.get().getRazorpayPaymentId());
+            return razorpay.refunds.create(refundRequest);
+        }else{
+            throw new ResourceNotFoundException("Payment not found!");
+        }
+
+    }
+
     public void handlePaymentFailure(String orderId){
         Payment payment = paymentRepository.findByRazorpayOrderId(orderId).orElseThrow(
                 () -> new ResourceNotFoundException("Payment  not found with orderId: " + orderId));
         payment.setStatus(PaymentStatus.FAILED);
+        payment.setUpdatedOn(LocalDate.now());
         paymentRepository.save(payment);
         bookingService.removeBookedRooms(payment.getBooking());
     }
