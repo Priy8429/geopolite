@@ -243,9 +243,8 @@ public class BookingService {
         return bookingMapper.toResponseDtos(bookings);
     }
 
-    public Booking getBookingById(Long id) {
-        return bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+    public Booking getBookingById(String bookingNumber) {
+        return bookingRepository.findByBookingNumber(bookingNumber);
     }
 
     public BookingResponseDto getBookingResponseById(Long id) {
@@ -254,13 +253,16 @@ public class BookingService {
         return bookingMapper.toResponseDto(booking);
     }
 
-    public BookingResponseDto cancelBooking(Long bookingId) throws RazorpayException {
+    public BookingResponseDto cancelBooking(String bookingId) throws RazorpayException {
         Booking booking = getBookingById(bookingId);
         if (booking.getStatus() == BookingStatus.CONFIRMED) {
-            booking.setStatus(BookingStatus.CANCELLED);
+
         }
-        if(booking.getPaymentType().equals(PaymentType.PREPAID)){
-            paymentService.initiateRefund(booking);
+        if(booking.getStatus().equals(BookingStatus.CONFIRMED) && booking.getPaymentType().equals(PaymentType.PREPAID)){
+            Refund refund = paymentService.initiateRefund(booking);
+            if(Objects.nonNull(refund)){
+                booking.setStatus(BookingStatus.CANCELLED);
+            }
         }
 //        booking.setUpdatedBy(booking.getUser().getId());
         booking.setUpdatedOn(LocalDate.now());

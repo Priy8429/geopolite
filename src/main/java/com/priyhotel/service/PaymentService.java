@@ -3,6 +3,7 @@ package com.priyhotel.service;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.constants.PaymentType;
+import com.priyhotel.constants.RefundStatus;
 import com.priyhotel.dto.PaymentVerifyRequestDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.entity.Booking;
@@ -12,6 +13,7 @@ import com.priyhotel.entity.RoomBookingRequest;
 import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.mapper.RoomBookingMapper;
 import com.priyhotel.repository.PaymentRepository;
+import com.priyhotel.repository.RefundRepository;
 import com.razorpay.*;
 import jakarta.transaction.Transactional;
 import org.json.JSONObject;
@@ -44,6 +46,9 @@ public class PaymentService {
     PaymentRepository paymentRepository;
 
     @Autowired
+    RefundRepository refundRepository;
+
+    @Autowired
     BookingService bookingService;
 
     @Autowired
@@ -51,6 +56,10 @@ public class PaymentService {
 
     @Autowired
     RoomBookingMapper roomBookingMapper;
+
+    public RazorpayClient getRazorpayClient() throws RazorpayException {
+        return new RazorpayClient(apiKey, apiSecret);
+    }
 
     @Transactional
     public String createOrder(String bookingNumber) throws RazorpayException {
@@ -144,13 +153,28 @@ public class PaymentService {
 
     }
 
-    public Refund initiateRefund(Booking booking) throws RazorpayException {
+    public com.priyhotel.entity.Refund initiateRefund(Booking booking) throws RazorpayException {
         Optional<Payment> payment = paymentRepository.findByBooking(booking);
-        if(payment.isPresent()){
+        if(payment.isPresent() && payment.get().getStatus().equals(PaymentStatus.PAID)){
             RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecret);
+            String paymentId = payment.get().getRazorpayPaymentId();
+            System.out.println(razorpay.payments.fetch(payment.get().getRazorpayPaymentId()));
+            long amount = Math.round(payment.get().getAmount()*100);
             JSONObject refundRequest = new JSONObject();
-            refundRequest.put("payment_id", payment.get().getRazorpayPaymentId());
-            return razorpay.refunds.create(refundRequest);
+            refundRequest.put("amount",amount-100);
+            refundRequest.put("speed","normal");
+            refundRequest.put("receipt", "ref_" + System.currentTimeMillis());
+            System.out.println(paymentId);
+            System.out.println(refundRequest);
+            Refund razorpayRefund = razorpay.payments.refund(paymentId, refundRequest);
+
+            com.priyhotel.entity.Refund refund = new com.priyhotel.entity.Refund();
+            refund.setPayment(payment.get());
+            refund.setRefundAmount(payment.get().getAmount());
+            refund.setRefundId(razorpayRefund.get("id"));
+            refund.setRefundStatus(RefundStatus.valueOf(razorpayRefund.get("status")));
+            return refundRepository.save(refund);
+
         }else{
             throw new ResourceNotFoundException("Payment not found!");
         }
@@ -174,4 +198,8 @@ public class PaymentService {
         return Base64.getEncoder().encodeToString(sha256Hmac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
     }
 
+    public Payment getByPaymentId(String orderId){
+        return paymentRepository.findByRazorpayPaymentId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+    }
 }

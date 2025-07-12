@@ -69,10 +69,10 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingResponseById(id));
     }
 
-    @PutMapping("/{id}/cancel")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long id) {
+    @PutMapping("/{bookingNumber}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable String bookingNumber) {
         try{
-            BookingResponseDto response = bookingService.cancelBooking(id);
+            BookingResponseDto response = bookingService.cancelBooking(bookingNumber);
             return ResponseEntity.ok("Your refund has been initiated!");
         }catch (Exception ex){
             logger.error("Some error occurred: {}", ex.getMessage(), ex);
