@@ -255,15 +255,21 @@ public class BookingService {
 
     public BookingResponseDto cancelBooking(String bookingId) throws RazorpayException {
         Booking booking = getBookingById(bookingId);
-        if (booking.getStatus() == BookingStatus.CONFIRMED) {
 
+        if(LocalDate.now().isAfter(booking.getCheckInDate()) || LocalDate.now().isEqual(booking.getCheckInDate())){
+            throw new BadRequestException("Cannot cancel booking on the checkin date or after checkin date!");
         }
+
         if(booking.getStatus().equals(BookingStatus.CONFIRMED) && booking.getPaymentType().equals(PaymentType.PREPAID)){
             Refund refund = paymentService.initiateRefund(booking);
             if(Objects.nonNull(refund)){
                 booking.setStatus(BookingStatus.CANCELLED);
             }
         }
+
+        // free reserved rooms
+        this.removeBookedRooms(booking);
+
 //        booking.setUpdatedBy(booking.getUser().getId());
         booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
@@ -349,7 +355,7 @@ public class BookingService {
         List<Booking> bookings = null;
         if(Objects.nonNull(pageNumber) && Objects.nonNull(pageSize)){
             Pageable paging = PageRequest.of(pageNumber, pageSize);
-            bookings = bookingRepository.getBookingsByStatusAndHotelId(BookingStatus.CONFIRMED, hotelId, paging);
+            bookings = bookingRepository.getBookingsByStatusInAndHotelId(List.of(BookingStatus.CONFIRMED, BookingStatus.CANCELLED), hotelId, paging);
         }else{
             bookings = bookingRepository.getBookingsByStatusAndHotelId(BookingStatus.CONFIRMED, hotelId);
         }
@@ -385,8 +391,11 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    @Transactional
     public void removeBookedRooms(Booking booking){
-        roomBookingRepository.deleteAll(booking.getBookedRooms());
+//        roomBookingRepository.deleteAllByBookingId(booking.getId());
+        booking.getBookedRooms().clear();
+        bookingRepository.save(booking);
     }
 
     public void reserveRooms(Booking booking){

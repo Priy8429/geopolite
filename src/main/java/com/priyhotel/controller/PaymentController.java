@@ -65,4 +65,31 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("booking/{bookingNumber}")
+    public ResponseEntity<?> getPaymentsByBookingNumber(@PathVariable String bookingNumber){
+        try{
+            return ResponseEntity.ok(paymentService.getPaymentsByBookingNumber(bookingNumber));
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("Error getting refund: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("booking/{bookingNumber}/paid")
+    public ResponseEntity<?> getPaidPaymentByBookingNumber(@PathVariable String bookingNumber){
+        try{
+            return ResponseEntity.ok(paymentService.getPaidPaymentByBookingNumber(bookingNumber));
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("Error getting payment: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("booking/refund/{bookingNumber}")
+    public ResponseEntity<?> getRefundByBookingNumber(@PathVariable String bookingNumber){
+        try{
+            return ResponseEntity.ok(paymentService.getRefundByBookingNumber(bookingNumber));
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("Error getting refund: " + e.getMessage());
+        }
+    }
+
 }

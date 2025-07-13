@@ -28,6 +28,7 @@ com\priyhotel\dto\OffersUpdateDto$OffersUpdateDtoBuilder.class
 com\priyhotel\constants\BookingStatus.class
 com\priyhotel\controller\CouponController.class
 com\priyhotel\entity\RoomType.class
+com\priyhotel\service\RoomBookingService.class
 com\priyhotel\entity\Audit.class
 com\priyhotel\repository\RefundRepository.class
 com\priyhotel\repository\UserRepository.class
@@ -53,6 +54,7 @@ com\priyhotel\mapper\RoomTypeMapper.class
 com\priyhotel\constants\PaymentType.class
 com\priyhotel\dto\LoginRequest.class
 com\priyhotel\PriyhotelApplication.class
+com\priyhotel\service\SchedulerService.class
 com\priyhotel\config\WebConfig.class
 com\priyhotel\controller\HotelController.class
 com\priyhotel\repository\RoomBookingRepository.class
