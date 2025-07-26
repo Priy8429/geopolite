@@ -16,6 +16,7 @@ com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
 com\priyhotel\controller\ForwardController.class
 com\priyhotel\mapper\HotelMapper.class
+com\priyhotel\dto\PasswordResetDto.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
 com\priyhotel\util\JwtUtil.class
