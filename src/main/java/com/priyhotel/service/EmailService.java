@@ -170,4 +170,28 @@ public class EmailService {
                 "<br>";
         this.sendBookingRequestEmail(request.getFullName(), email, content);
     }
+
+    @Async
+    public void sendPasswordResetOtp(String email, String otp) {
+        String subject = "Password reset OTP";
+        String content = "<p><strong>Password reset OTP for </strong> " + email + " is " + otp + "</p>";
+        this.sendEmail(email, subject, content);
+    }
+
+    public void sendEmail(String toEmail, String subject, String content) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            //            String tempEmail = "waqarmohd99@gmail.com";
+            String tempEmail = toEmail;
+            helper.setTo(tempEmail);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error sending email: " + e.getMessage());
+        }
+    }
+
 }

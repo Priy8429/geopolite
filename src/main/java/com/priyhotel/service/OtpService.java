@@ -17,13 +17,13 @@ public class OtpService {
     private final Map<String, OtpEntry> otpStorage = new ConcurrentHashMap<>();
     private final Random random = new Random();
 
-    public String generateOtp(String phoneNumber) {
+    public String generateOtp(String phoneOrEmail) {
         removeExpiredOtps(); // Cleanup before generating a new OTP
 
-        String otp = String.format("%06d", random.nextInt(1000000)); // 6-digit OTP
+        String otp = String.format("%04d", random.nextInt(10000)); // 4-digit OTP
         Instant expiryTime = Instant.now().plusSeconds(OTP_VALID_DURATION);
 
-        otpStorage.put(phoneNumber, new OtpEntry(otp, expiryTime));
+        otpStorage.put(phoneOrEmail, new OtpEntry(otp, expiryTime));
         return otp;
     }
 

@@ -10,7 +10,9 @@ import com.priyhotel.exception.ResourceNotFoundException;
 import com.priyhotel.mapper.UserMapper;
 import com.priyhotel.repository.UserRepository;
 import com.priyhotel.util.JwtUtil;
+import jakarta.transaction.NotSupportedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,12 @@ public class AuthService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OtpService otpService;
+
+    @Autowired
+    private EmailService emailService;
 
     public String rawRegister(User user){
         userRepository.save(user);
@@ -123,4 +131,34 @@ public class AuthService {
                 .build();
     }
 
+    public void sendPasswordResetOtp(String phoneOrEmail) throws NotSupportedException {
+        Optional<User> user = this.getUserByEmailOrPhone(phoneOrEmail, phoneOrEmail);
+        if(user.isPresent()){
+            String otp = otpService.generateOtp(phoneOrEmail);
+            System.out.println(otp);
+            if(phoneOrEmail.contains("@")){
+                emailService.sendPasswordResetOtp(phoneOrEmail, otp);
+            }else{
+                throw new NotSupportedException("SMS OTP is not currently supported, please try with email!");
+            }
+
+        }else{
+            throw new ResourceNotFoundException("User does not exist!");
+        }
+    }
+
+    public void verifyOtpAndSaveNewPassword(String email, String otp, String newPassword) {
+        Optional<User> user = this.findByEmail(email);
+        if(user.isPresent()){
+            boolean isValidOtp = otpService.validateOtp(email, otp);
+            if(isValidOtp){
+                user.get().setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user.get());
+            }else{
+                throw new BadCredentialsException("Invalid OTP, please try again!");
+            }
+        }else{
+            throw new ResourceNotFoundException("User with this email does not exist!");
+        }
+    }
 }
