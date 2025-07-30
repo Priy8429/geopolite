@@ -68,6 +68,28 @@ public class AuthController {
     }
 
     @PostMapping("reset-password/verify-otp")
+    public ResponseEntity<?> verifyPasswordResetOtp(@RequestBody PasswordResetDto dto){
+        try{
+            boolean isValidOtp = authService.verifyPasswordResetOtp(dto.getEmail(), dto.getOtp());
+            if(isValidOtp){
+                return ResponseEntity.ok("OTP Verified successfully!");
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        DefaultErrorResponse.builder()
+                                .statusCode(HttpStatus.BAD_REQUEST.value())
+                                .message("Invalid OTP!")
+                                .build());
+            }
+        }catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    DefaultErrorResponse.builder()
+                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Error sending sms, please try later")
+                            .build());
+        }
+    }
+
+    @PostMapping("reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDto dto){
         try{
             authService.verifyOtpAndSaveNewPassword(dto.getEmail(), dto.getOtp(), dto.getNewPassword());

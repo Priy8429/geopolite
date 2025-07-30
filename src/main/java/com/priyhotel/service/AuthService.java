@@ -161,4 +161,18 @@ public class AuthService {
             throw new ResourceNotFoundException("User with this email does not exist!");
         }
     }
+
+    public boolean verifyPasswordResetOtp(String email, String otp) {
+        Optional<User> user = this.findByEmail(email);
+        if(user.isPresent()){
+            boolean isValidOtp = otpService.validateOtp(email, otp);
+            if(isValidOtp){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            throw new ResourceNotFoundException("User with this email does not exist!");
+        }
+    }
 }

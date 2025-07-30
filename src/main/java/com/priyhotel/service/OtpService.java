@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OtpService {
 
-    private static final int OTP_VALID_DURATION = 5 * 60; // 5 minutes (in seconds)
+    private static final int OTP_VALID_DURATION = 10 * 60; // 5 minutes (in seconds)
 
     private final Map<String, OtpEntry> otpStorage = new ConcurrentHashMap<>();
     private final Random random = new Random();
@@ -28,17 +28,17 @@ public class OtpService {
     }
 
     public boolean validateOtp(String phoneNumber, String enteredOtp) {
-        removeExpiredOtps(); // Cleanup before validating
-
         OtpEntry otpEntry = otpStorage.get(phoneNumber);
-
-        if (otpEntry == null) {
-            return false; // No OTP found
-        }
 
         if (Instant.now().isAfter(otpEntry.getExpiryTime())) {
             otpStorage.remove(phoneNumber); // Expired OTP, remove it
             return false;
+        }
+
+        removeExpiredOtps(); // Cleanup before validating
+
+        if (otpEntry == null) {
+            return false; // No OTP found
         }
 
         if (otpEntry.getOtp().equals(enteredOtp)) {
