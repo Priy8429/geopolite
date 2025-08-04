@@ -37,16 +37,12 @@ public class OtpService {
 
         removeExpiredOtps(); // Cleanup before validating
 
-        if (otpEntry == null) {
-            return false; // No OTP found
-        }
+//        if (otpEntry == null) {
+//            return false; // No OTP found
+//        }
 
-        if (otpEntry.getOtp().equals(enteredOtp)) {
-            otpStorage.remove(phoneNumber); // OTP is valid, remove it after use
-            return true;
-        }
-
-        return false; // OTP is incorrect
+        //            otpStorage.remove(phoneNumber); // OTP is valid, remove it after use
+        return otpEntry.getOtp().equals(enteredOtp);// OTP is incorrect
     }
 
     public void clearOtp(String phoneNumber) {

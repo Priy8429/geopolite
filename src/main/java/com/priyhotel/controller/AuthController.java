@@ -101,6 +101,7 @@ public class AuthController {
                             .message(e.getMessage())
                             .build());
         }catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     DefaultErrorResponse.builder()
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
