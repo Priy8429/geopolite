@@ -1,10 +1,12 @@
 package com.priyhotel.controller;
 
+import com.priyhotel.constants.PaymentType;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Room;
 import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
+import com.razorpay.Refund;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +70,24 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingResponseById(id));
     }
 
-    @PutMapping("/{id}/cancel")
-    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    @PutMapping("/{bookingNumber}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable String bookingNumber) {
+        try{
+            BookingResponseDto response = bookingService.cancelBooking(bookingNumber);
+            if(response.getPaymentType().equals(PaymentType.PREPAID)){
+                return ResponseEntity.ok("Your booking is cancelled and refund has been initiated!");
+            }else{
+                return ResponseEntity.ok("Your booking has been cancelled!");
+            }
+
+        }catch (Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+
     }
 
     @PostMapping("/request")
@@ -103,13 +120,24 @@ public class BookingController {
     }
 
     @GetMapping("/upcoming")
-    public ResponseEntity<?> getOnwardBookings(@RequestParam Long hotelId){
-        return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId));
+    public ResponseEntity<?> getOnwardBookings(@RequestParam Long hotelId, @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize){
+        return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId, pageNumber, pageSize));
     }
 
     @PatchMapping("/{bookingNumber}/update-checkout")
     public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate newCheckoutDate){
         return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
+    }
+
+    @PostMapping("/{bookingNumber}/payment/update-status/offline")
+    public ResponseEntity<?> updateBookingPaymentStatusForOfflinePayment(@PathVariable String bookingNumber){
+        BookingDto bookingDto = bookingService.updateStatusForOfflinePayment(bookingNumber);
+        if(bookingDto != null){
+            return ResponseEntity.ok("Payment saved successfully!");
+        }else{
+            return ResponseEntity.ok("Issue in saving payment!");
+        }
+
     }
 
 }

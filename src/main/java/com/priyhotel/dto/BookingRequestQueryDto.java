@@ -10,4 +10,5 @@ public class BookingRequestQueryDto {
     private String phoneNumber;
     private Integer noOfGuests;
     private Integer noOfRooms;
+    private String specialRequest;
 }

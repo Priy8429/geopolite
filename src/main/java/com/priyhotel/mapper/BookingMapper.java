@@ -33,6 +33,7 @@ public class BookingMapper {
                 .bookedRooms(booking.getBookedRooms())
                 .paymentType(booking.getPaymentType())
                 .bookingSource(booking.getBookingSource())
+                .specialRequest(booking.getSpecialRequest())
                 .status(booking.getStatus())
                 .build();
     }
@@ -55,6 +56,7 @@ public class BookingMapper {
                 .rooms(booking.getBookedRooms() != null ? roomMapper.toDtosFromRoomBooking(booking.getBookedRooms()) : null)
                 .paymentType(booking.getPaymentType())
                 .bookingSource(booking.getBookingSource())
+                .specialRequest(booking.getSpecialRequest())
                 .status(booking.getStatus())
                 .build();
     }

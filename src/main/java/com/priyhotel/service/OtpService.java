@@ -12,41 +12,37 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OtpService {
 
-    private static final int OTP_VALID_DURATION = 5 * 60; // 5 minutes (in seconds)
+    private static final int OTP_VALID_DURATION = 10 * 60; // 5 minutes (in seconds)
 
     private final Map<String, OtpEntry> otpStorage = new ConcurrentHashMap<>();
     private final Random random = new Random();
 
-    public String generateOtp(String phoneNumber) {
+    public String generateOtp(String phoneOrEmail) {
         removeExpiredOtps(); // Cleanup before generating a new OTP
 
-        String otp = String.format("%06d", random.nextInt(1000000)); // 6-digit OTP
+        String otp = String.format("%04d", random.nextInt(10000)); // 4-digit OTP
         Instant expiryTime = Instant.now().plusSeconds(OTP_VALID_DURATION);
 
-        otpStorage.put(phoneNumber, new OtpEntry(otp, expiryTime));
+        otpStorage.put(phoneOrEmail, new OtpEntry(otp, expiryTime));
         return otp;
     }
 
     public boolean validateOtp(String phoneNumber, String enteredOtp) {
-        removeExpiredOtps(); // Cleanup before validating
-
         OtpEntry otpEntry = otpStorage.get(phoneNumber);
-
-        if (otpEntry == null) {
-            return false; // No OTP found
-        }
 
         if (Instant.now().isAfter(otpEntry.getExpiryTime())) {
             otpStorage.remove(phoneNumber); // Expired OTP, remove it
             return false;
         }
 
-        if (otpEntry.getOtp().equals(enteredOtp)) {
-            otpStorage.remove(phoneNumber); // OTP is valid, remove it after use
-            return true;
-        }
+        removeExpiredOtps(); // Cleanup before validating
 
-        return false; // OTP is incorrect
+//        if (otpEntry == null) {
+//            return false; // No OTP found
+//        }
+
+        //            otpStorage.remove(phoneNumber); // OTP is valid, remove it after use
+        return otpEntry.getOtp().equals(enteredOtp);// OTP is incorrect
     }
 
     public void clearOtp(String phoneNumber) {

@@ -1,5 +1,6 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.Role;
@@ -16,9 +17,12 @@ import com.razorpay.RazorpayException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -134,7 +138,8 @@ public class BookingService {
         }else{
             booking.setPaymentType(bookingRequestDto.getPaymentType());
         }
-
+        booking.setCreatedOn(LocalDate.now());
+        booking.setUpdatedOn(LocalDate.now());
         Booking savedBooking = bookingRepository.save(booking);
 
         // save room booking requests
@@ -147,7 +152,7 @@ public class BookingService {
             booking.setBookedRooms(roomBookings);
             saveBookedRooms(roomBookings);
         }
-
+        savedBooking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(savedBooking);
 
         // if payment is postpaid, send confirmation mail and sms to user and owner
@@ -240,9 +245,8 @@ public class BookingService {
         return bookingMapper.toResponseDtos(bookings);
     }
 
-    public Booking getBookingById(Long id) {
-        return bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+    public Booking getBookingById(String bookingNumber) {
+        return bookingRepository.findByBookingNumber(bookingNumber);
     }
 
     public BookingResponseDto getBookingResponseById(Long id) {
@@ -251,11 +255,27 @@ public class BookingService {
         return bookingMapper.toResponseDto(booking);
     }
 
-    public BookingResponseDto cancelBooking(Long bookingId) {
+    public BookingResponseDto cancelBooking(String bookingId) throws RazorpayException {
         Booking booking = getBookingById(bookingId);
-        if (booking.getStatus() == BookingStatus.CONFIRMED) {
+
+        if(LocalDate.now().isAfter(booking.getCheckInDate()) || LocalDate.now().isEqual(booking.getCheckInDate())){
+            throw new BadRequestException("Cannot cancel booking on the checkin date or after checkin date!");
+        }
+
+        if(booking.getStatus().equals(BookingStatus.CONFIRMED) && booking.getPaymentType().equals(PaymentType.PREPAID)){
+            Refund refund = paymentService.initiateRefund(booking);
+            if(Objects.nonNull(refund)){
+                booking.setStatus(BookingStatus.CANCELLED);
+            }
+        }else if(booking.getPaymentType().equals(PaymentType.PREPAID)){
             booking.setStatus(BookingStatus.CANCELLED);
         }
+
+        // free reserved rooms
+        this.removeBookedRooms(booking);
+
+//        booking.setUpdatedBy(booking.getUser().getId());
+        booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
         return bookingMapper.toResponseDto(booking);
     }
@@ -334,8 +354,16 @@ public class BookingService {
 
     }
 
-    public List<BookingResponseDto> getOnwardBookings(Long hotelId) {
-        List<Booking> bookings = bookingRepository.findOnwardBookings(hotelId);
+    public List<BookingResponseDto> getOnwardBookings(Long hotelId, Integer pageNumber, Integer pageSize) {
+//        List<Booking> bookings = bookingRepository.findOnwardBookings(hotelId);
+        List<Booking> bookings = null;
+        if(Objects.nonNull(pageNumber) && Objects.nonNull(pageSize)){
+            Pageable paging = PageRequest.of(pageNumber, pageSize);
+            bookings = bookingRepository.getBookingsByStatusInAndHotelId(List.of(BookingStatus.CONFIRMED, BookingStatus.CANCELLED), hotelId, paging);
+        }else{
+            bookings = bookingRepository.getBookingsByStatusAndHotelId(BookingStatus.CONFIRMED, hotelId);
+        }
+
         return bookingMapper.toResponseDtos(bookings);
     }
 
@@ -346,6 +374,8 @@ public class BookingService {
     public BookingResponseDto updateCheckoutDate(String bookingNumber, LocalDate newCheckoutDate) {
         Booking booking = this.getBookingByBookingNumber(bookingNumber);
         booking.setCheckOutDate(newCheckoutDate);
+//        booking.setUpdatedBy(booking.getUser().getId());
+        booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
         return bookingMapper.toResponseDto(booking);
     }
@@ -353,6 +383,7 @@ public class BookingService {
     public void updateBookingStatus(String bookingNumber, BookingStatus status){
         Booking booking = this.getBookingByBookingNumber(bookingNumber);
         booking.setStatus(status);
+        booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
     }
 
@@ -364,8 +395,11 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    @Transactional
     public void removeBookedRooms(Booking booking){
-        roomBookingRepository.deleteAll(booking.getBookedRooms());
+//        roomBookingRepository.deleteAllByBookingId(booking.getId());
+        booking.getBookedRooms().clear();
+        bookingRepository.save(booking);
     }
 
     public void reserveRooms(Booking booking){
@@ -378,5 +412,22 @@ public class BookingService {
         );
         booking.setBookedRooms(bookedRooms);
         this.saveBooking(booking);
+    }
+
+    public BookingDto updateStatusForOfflinePayment(String bookingNumber) {
+        Booking booking = getBookingByBookingNumber(bookingNumber);
+        if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
+            booking.setPaymentType(PaymentType.OFFLINE);
+            Payment newPayment = new Payment();
+            newPayment.setBooking(booking);
+            newPayment.setStatus(PaymentStatus.PAID);
+            newPayment.setPaymentDate(LocalDateTime.now());
+            newPayment.setAmount(booking.getTotalAmount());
+            newPayment.setCreatedOn(LocalDate.now());
+            paymentService.savePayment(newPayment);
+            bookingRepository.save(booking);
+            return bookingMapper.toDto(booking);
+        }
+        return null;
     }
 }

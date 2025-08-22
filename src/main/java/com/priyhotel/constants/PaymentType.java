@@ -1,5 +1,5 @@
 package com.priyhotel.constants;
 
 public enum PaymentType {
-    PREPAID, POSTPAID, PARTIALLY_PAID
+    PREPAID, POSTPAID, OFFLINE, PARTIALLY_PAID
 }

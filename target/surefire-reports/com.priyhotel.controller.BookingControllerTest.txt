@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.priyhotel.controller.BookingControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.649 s -- in com.priyhotel.controller.BookingControllerTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.658 s -- in com.priyhotel.controller.BookingControllerTest
