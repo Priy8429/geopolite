@@ -147,9 +147,9 @@ public class BookingService {
         roomBookingRequestRepository.saveAll(roomBookingRequests);
 
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
-            booking.setStatus(BookingStatus.CONFIRMED);
+            savedBooking.setStatus(BookingStatus.CONFIRMED);
             List<RoomBooking> roomBookings = this.bookRooms(availableRooms, savedBooking);
-            booking.setBookedRooms(roomBookings);
+            savedBooking.setBookedRooms(roomBookings);
             saveBookedRooms(roomBookings);
         }
         savedBooking.setUpdatedOn(LocalDate.now());
