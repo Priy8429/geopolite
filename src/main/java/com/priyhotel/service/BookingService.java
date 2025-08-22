@@ -1,5 +1,6 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.Role;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -265,6 +267,8 @@ public class BookingService {
             if(Objects.nonNull(refund)){
                 booking.setStatus(BookingStatus.CANCELLED);
             }
+        }else if(booking.getPaymentType().equals(PaymentType.PREPAID)){
+            booking.setStatus(BookingStatus.CANCELLED);
         }
 
         // free reserved rooms
@@ -408,5 +412,22 @@ public class BookingService {
         );
         booking.setBookedRooms(bookedRooms);
         this.saveBooking(booking);
+    }
+
+    public BookingDto updateStatusForOfflinePayment(String bookingNumber) {
+        Booking booking = getBookingByBookingNumber(bookingNumber);
+        if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
+            booking.setPaymentType(PaymentType.OFFLINE);
+            Payment newPayment = new Payment();
+            newPayment.setBooking(booking);
+            newPayment.setStatus(PaymentStatus.PAID);
+            newPayment.setPaymentDate(LocalDateTime.now());
+            newPayment.setAmount(booking.getTotalAmount());
+            newPayment.setCreatedOn(LocalDate.now());
+            paymentService.savePayment(newPayment);
+            bookingRepository.save(booking);
+            return bookingMapper.toDto(booking);
+        }
+        return null;
     }
 }

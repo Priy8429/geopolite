@@ -1,5 +1,6 @@
 package com.priyhotel.controller;
 
+import com.priyhotel.constants.PaymentType;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Room;
@@ -73,7 +74,12 @@ public class BookingController {
     public ResponseEntity<?> cancelBooking(@PathVariable String bookingNumber) {
         try{
             BookingResponseDto response = bookingService.cancelBooking(bookingNumber);
-            return ResponseEntity.ok("Your refund has been initiated!");
+            if(response.getPaymentType().equals(PaymentType.PREPAID)){
+                return ResponseEntity.ok("Your booking is cancelled and refund has been initiated!");
+            }else{
+                return ResponseEntity.ok("Your booking has been cancelled!");
+            }
+
         }catch (Exception ex){
             logger.error("Some error occurred: {}", ex.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
@@ -121,6 +127,17 @@ public class BookingController {
     @PatchMapping("/{bookingNumber}/update-checkout")
     public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate newCheckoutDate){
         return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
+    }
+
+    @PostMapping("/{bookingNumber}/payment/update-status/offline")
+    public ResponseEntity<?> updateBookingPaymentStatusForOfflinePayment(@PathVariable String bookingNumber){
+        BookingDto bookingDto = bookingService.updateStatusForOfflinePayment(bookingNumber);
+        if(bookingDto != null){
+            return ResponseEntity.ok("Payment saved successfully!");
+        }else{
+            return ResponseEntity.ok("Issue in saving payment!");
+        }
+
     }
 
 }
