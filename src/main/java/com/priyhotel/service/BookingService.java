@@ -205,6 +205,46 @@ public class BookingService {
         return paymentService.createOrder(booking.getBookingNumber());
     }
 
+    public BookingResponseDto createBookingForOfflineGuest(GuestBookingRequestDto guestBookingRequestDto) {
+        User user = null;
+
+        Optional<User> userByEmail = authService.findByEmail(guestBookingRequestDto.getEmail());
+        Optional<User> userByContactNumber = authService.findByPhoneNumber(guestBookingRequestDto.getPhone());
+        if(userByContactNumber.isPresent()){
+            user = userByContactNumber.get();
+        }
+
+        if(userByEmail.isPresent()){
+            user = userByEmail.get();
+        }
+
+        if(userByEmail.isEmpty() && userByContactNumber.isEmpty()){
+            UserRequestDto guestUser = UserRequestDto.builder()
+                    .name(guestBookingRequestDto.getFullName())
+                    .email(guestBookingRequestDto.getEmail())
+                    .contactNumber(guestBookingRequestDto.getPhone())
+                    .role(Role.GUEST).build();
+            user = authService.register(guestUser);
+        }
+
+        BookingRequestDto bookingDto = BookingRequestDto.builder()
+                .userId(user.getId()) // null if guest
+                .hotelId(guestBookingRequestDto.getHotelId())
+                .couponCode(guestBookingRequestDto.getCouponCode())
+                .noOfAdults(guestBookingRequestDto.getNoOfAdults())
+                .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
+                .checkInDate(guestBookingRequestDto.getCheckInDate())
+                .checkOutDate(guestBookingRequestDto.getCheckOutDate())
+                .paymentType(PaymentType.POSTPAID)
+                .totalAmount(guestBookingRequestDto.getTotalAmount())
+                .payableAmount(guestBookingRequestDto.getPayableAmount())
+                .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
+                .build();
+        Booking booking = this.createBooking(bookingDto);
+//        this.reserveRooms(booking);
+        return bookingMapper.toResponseDto(booking);
+    }
+
     public List<RoomBooking> bookRooms(List<Room> availableRooms, Booking booking){
         List<RoomBooking> roomBookings = new ArrayList<>();
         List<RoomBookingRequest> roomsList = roomBookingRequestRepository.findByBookingId(booking.getId());
@@ -267,7 +307,7 @@ public class BookingService {
             if(Objects.nonNull(refund)){
                 booking.setStatus(BookingStatus.CANCELLED);
             }
-        }else if(booking.getPaymentType().equals(PaymentType.PREPAID)){
+        }else if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
             booking.setStatus(BookingStatus.CANCELLED);
         }
 

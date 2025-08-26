@@ -60,6 +60,20 @@ public class BookingController {
         }
     }
 
+    @PostMapping("/offline")
+    public ResponseEntity<?> createBookingForOfflineGuest(@RequestBody GuestBookingRequestDto bookingRequestDto) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingService.createBookingForOfflineGuest(bookingRequestDto));
+        }catch(Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingResponseDto>> getUserBookings(@PathVariable Long userId) {
         return ResponseEntity.ok(bookingService.getUserBookings(userId));
