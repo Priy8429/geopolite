@@ -48,8 +48,8 @@ public class EmailService {
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
 
         StringBuilder content =  new StringBuilder();
-
-        content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
+        content.append("<p>Hi ").append(user.getName()).append("</p></br></br>")
+                .append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
@@ -94,7 +94,8 @@ public class EmailService {
 
         // Construct the email body
         StringBuilder content =  new StringBuilder();
-        content.append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
+        content.append("<p>Customer booking confirmed!").append(booking.getUser().getName()).append("</p></br>")
+                .append("<p><strong>Customer Name:</strong> ").append(booking.getUser().getName()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
