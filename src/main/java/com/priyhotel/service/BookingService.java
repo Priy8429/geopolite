@@ -307,7 +307,7 @@ public class BookingService {
             if(Objects.nonNull(refund)){
                 booking.setStatus(BookingStatus.CANCELLED);
             }
-        }else if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
+        }else if(booking.getPaymentType().equals(PaymentType.POSTPAID) || booking.getPaymentType().equals(PaymentType.OFFLINE)){
             booking.setStatus(BookingStatus.CANCELLED);
         }
 
