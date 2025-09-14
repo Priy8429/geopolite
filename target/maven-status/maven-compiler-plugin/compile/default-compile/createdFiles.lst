@@ -95,6 +95,7 @@ com\priyhotel\dto\RoomTypeRequestDto.class
 com\priyhotel\entity\Coupon.class
 com\priyhotel\service\RefundService.class
 com\priyhotel\repository\LocationRepository.class
+com\priyhotel\constants\BookingSource.class
 com\priyhotel\exception\GlobalExceptionHandler.class
 com\priyhotel\repository\ReviewRepository.class
 com\priyhotel\dto\RoomRequestDto.class

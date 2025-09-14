@@ -1,6 +1,7 @@
 package com.priyhotel.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentType;
 import jakarta.persistence.*;
@@ -63,7 +64,8 @@ public class Booking extends Audit {
 
     private Integer noOfChildrens;
 
-    private String bookingSource;
+    @Enumerated(EnumType.STRING)
+    private BookingSource bookingSource;
 
     @Column(nullable = true)
     private String specialRequest;

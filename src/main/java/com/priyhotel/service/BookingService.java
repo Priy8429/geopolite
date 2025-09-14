@@ -1,9 +1,6 @@
 package com.priyhotel.service;
 
-import com.priyhotel.constants.PaymentStatus;
-import com.priyhotel.constants.PaymentType;
-import com.priyhotel.constants.BookingStatus;
-import com.priyhotel.constants.Role;
+import com.priyhotel.constants.*;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
@@ -130,7 +127,7 @@ public class BookingService {
         booking.setStatus(BookingStatus.PENDING);
 
         if(Objects.isNull(bookingRequestDto.getBookingSource())){
-            booking.setBookingSource("OWN");
+            booking.setBookingSource(BookingSource.OWN);
         }
 
         if(Objects.isNull(bookingRequestDto.getPaymentType())){
@@ -229,6 +226,7 @@ public class BookingService {
 
         BookingRequestDto bookingDto = BookingRequestDto.builder()
                 .userId(user.getId()) // null if guest
+                .bookingSource(BookingSource.OFFLINE)
                 .hotelId(guestBookingRequestDto.getHotelId())
                 .couponCode(guestBookingRequestDto.getCouponCode())
                 .noOfAdults(guestBookingRequestDto.getNoOfAdults())

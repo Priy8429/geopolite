@@ -1,5 +1,6 @@
 package com.priyhotel.dto;
 
+import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class BookingRequestDto {
     private PaymentType paymentType;
     private Double totalAmount;
     private Double payableAmount;
-    private String bookingSource;
+    private BookingSource bookingSource;
     private String specialRequest;
     private List<RoomBookingDto> roomBookingList;
 }

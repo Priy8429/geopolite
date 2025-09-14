@@ -1,5 +1,6 @@
 package com.priyhotel.dto;
 
+import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentType;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ public class BookingResponseDto {
 
     private List<RoomDto> rooms;
 
-    private String bookingSource;
+    private BookingSource bookingSource;
 
     private String specialRequest;
 
