@@ -3,6 +3,7 @@ package com.priyhotel.controller;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
+import com.priyhotel.entity.Payment;
 import com.priyhotel.entity.Room;
 import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
@@ -145,9 +146,9 @@ public class BookingController {
 
     @PostMapping("/{bookingNumber}/payment/update-status/offline")
     public ResponseEntity<?> updateBookingPaymentStatusForOfflinePayment(@PathVariable String bookingNumber){
-        BookingDto bookingDto = bookingService.updateStatusForOfflinePayment(bookingNumber);
-        if(bookingDto != null){
-            return ResponseEntity.ok("Payment saved successfully!");
+        Payment payment = bookingService.updateStatusForOfflinePayment(bookingNumber);
+        if(payment != null){
+            return ResponseEntity.ok(payment);
         }else{
             return ResponseEntity.ok("Issue in saving payment!");
         }

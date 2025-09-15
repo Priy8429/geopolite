@@ -128,6 +128,8 @@ public class BookingService {
 
         if(Objects.isNull(bookingRequestDto.getBookingSource())){
             booking.setBookingSource(BookingSource.OWN);
+        }else{
+            booking.setBookingSource(bookingRequestDto.getBookingSource());
         }
 
         if(Objects.isNull(bookingRequestDto.getPaymentType())){
@@ -233,7 +235,7 @@ public class BookingService {
                 .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
                 .checkInDate(guestBookingRequestDto.getCheckInDate())
                 .checkOutDate(guestBookingRequestDto.getCheckOutDate())
-                .paymentType(PaymentType.POSTPAID)
+                .paymentType(PaymentType.OFFLINE)
                 .totalAmount(guestBookingRequestDto.getTotalAmount())
                 .payableAmount(guestBookingRequestDto.getPayableAmount())
                 .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
@@ -452,7 +454,7 @@ public class BookingService {
         this.saveBooking(booking);
     }
 
-    public BookingDto updateStatusForOfflinePayment(String bookingNumber) {
+    public Payment updateStatusForOfflinePayment(String bookingNumber) {
         Booking booking = getBookingByBookingNumber(bookingNumber);
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
             booking.setPaymentType(PaymentType.OFFLINE);
@@ -464,7 +466,7 @@ public class BookingService {
             newPayment.setCreatedOn(LocalDate.now());
             paymentService.savePayment(newPayment);
             bookingRepository.save(booking);
-            return bookingMapper.toDto(booking);
+            return newPayment;
         }
         return null;
     }
