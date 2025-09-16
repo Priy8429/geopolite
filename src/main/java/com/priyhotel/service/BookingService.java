@@ -235,7 +235,7 @@ public class BookingService {
                 .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
                 .checkInDate(guestBookingRequestDto.getCheckInDate())
                 .checkOutDate(guestBookingRequestDto.getCheckOutDate())
-                .paymentType(PaymentType.OFFLINE)
+                .paymentType(PaymentType.POSTPAID)
                 .totalAmount(guestBookingRequestDto.getTotalAmount())
                 .payableAmount(guestBookingRequestDto.getPayableAmount())
                 .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
