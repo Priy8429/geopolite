@@ -79,4 +79,7 @@ public class Booking extends Audit {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status; // CONFIRMED, CANCELLED, PENDING
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Payment> payments;
 }

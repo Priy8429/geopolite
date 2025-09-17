@@ -35,6 +35,7 @@ com\priyhotel\repository\RefundRepository.class
 com\priyhotel\repository\UserRepository.class
 com\priyhotel\repository\RoomRepository.class
 com\priyhotel\entity\Hotel.class
+com\priyhotel\dto\PaymentResponseDto.class
 com\priyhotel\dto\RoomBookingDto.class
 com\priyhotel\dto\BookingDto$BookingDtoBuilder.class
 com\priyhotel\entity\Room.class
@@ -63,6 +64,7 @@ com\priyhotel\repository\AmenityRepository.class
 com\priyhotel\controller\BookingController.class
 com\priyhotel\entity\Amenity.class
 com\priyhotel\service\BookingService.class
+com\priyhotel\dto\PaymentResponseDto$PaymentResponseDtoBuilder.class
 com\priyhotel\service\RoomTypeService.class
 com\priyhotel\repository\CouponRepository.class
 com\priyhotel\dto\RoomTypeDto$RoomTypeDtoBuilder.class

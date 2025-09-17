@@ -2,6 +2,7 @@ package com.priyhotel.dto;
 
 import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.constants.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,4 +49,10 @@ public class BookingResponseDto {
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
 
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
+
+    private PaymentStatus paymentStatus;
+
+    private LocalDate paymentDate;
+
+    private Double paymentAmount;
 }

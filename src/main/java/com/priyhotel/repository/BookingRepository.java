@@ -1,6 +1,7 @@
 package com.priyhotel.repository;
 
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.dto.BookingResponseDto;
 import com.priyhotel.entity.Booking;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,6 +63,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Booking getBookingByBookingNumber(String bookingNumber);
 
+    @Query(value = "SELECT b FROM Booking b LEFT JOIN FETCH b.payments where b.hotel.id=:hotelId and b.status='CONFIRMED'")
     List<Booking> getBookingsByStatusAndHotelId(BookingStatus bookingStatus, Long hotelId);
 
     List<Booking> getBookingsByStatusInAndHotelId(List<BookingStatus> bookingStatuses, Long hotelId, Pageable pageable);
