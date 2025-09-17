@@ -11,6 +11,7 @@ import org.hibernate.annotations.Fetch;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -81,5 +82,5 @@ public class Booking extends Audit {
     private BookingStatus status; // CONFIRMED, CANCELLED, PENDING
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Payment> payments;
+    private List<Payment> payments = new ArrayList<>();
 }
