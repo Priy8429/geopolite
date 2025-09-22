@@ -19,10 +19,12 @@ com\priyhotel\mapper\HotelMapper.class
 com\priyhotel\dto\PasswordResetDto.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
+com\priyhotel\dto\UpdateCheckoutRequestDto.class
 com\priyhotel\util\JwtUtil.class
 com\priyhotel\exception\UserAlreadyRegisteredException.class
 com\priyhotel\controller\UserController.class
 com\priyhotel\repository\RoomTypeRepository.class
+com\priyhotel\dto\UpdateCheckoutRequestDto$UpdateCheckoutRequestDtoBuilder.class
 com\priyhotel\dto\OffersUpdateDto.class
 com\priyhotel\exception\InternalServerError.class
 com\priyhotel\dto\OffersUpdateDto$OffersUpdateDtoBuilder.class

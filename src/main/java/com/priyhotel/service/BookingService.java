@@ -411,9 +411,12 @@ public class BookingService {
         return bookingRepository.getBookingByBookingNumber(bookingNumber);
     }
 
-    public BookingResponseDto updateCheckoutDate(String bookingNumber, LocalDate newCheckoutDate) {
-        Booking booking = this.getBookingByBookingNumber(bookingNumber);
-        booking.setCheckOutDate(newCheckoutDate);
+    public BookingResponseDto updateCheckout(UpdateCheckoutRequestDto requestDto) {
+        Booking booking = this.getBookingByBookingNumber(requestDto.getBookingNumber());
+        booking.setCheckOutDate(requestDto.getNewCheckoutDate());
+        booking.setTotalAmount(requestDto.getNewBookingAmount());
+        booking.setPayableAmount(requestDto.getNewBookingAmount());
+
 //        booking.setUpdatedBy(booking.getUser().getId());
         booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
