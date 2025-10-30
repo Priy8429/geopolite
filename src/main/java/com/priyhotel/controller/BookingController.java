@@ -155,4 +155,10 @@ public class BookingController {
 
     }
 
+    @DeleteMapping("/delete-user-bookings/{userId}")
+    public ResponseEntity<?> deleteAllBookingsByUser(@PathVariable Long userId){
+        bookingService.removeBookingsByUserId(userId);
+        return ResponseEntity.ok("User bookings deleted successfully!");
+    }
+
 }

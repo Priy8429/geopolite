@@ -23,4 +23,5 @@ public class GuestBookingRequestDto {
     private Double totalAmount;
     private Double payableAmount;
     private List<RoomBookingDto> roomBookingList;
+    private PaymentType paymentType;
 }

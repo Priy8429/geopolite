@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class EmailService {
@@ -46,7 +47,10 @@ public class EmailService {
         User user = booking.getUser();
         String email = user.getEmail();
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
-
+        String roomNumbers = null;
+        if(!booking.getBookedRooms().isEmpty()){
+            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
+        }
         StringBuilder content =  new StringBuilder();
         content.append("<p>Hi ").append(user.getName()).append("</p></br></br>")
                 .append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
@@ -54,8 +58,8 @@ public class EmailService {
                 .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
         if(Objects.nonNull(payment)){
-            content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
-                    .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
+            content.append("<p><strong>Amount paid: </strong>₹").append(payment.getAmount()).append("</p></br>")
+                    .append("<p><strong>Payment ID: </strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
                     .append("</br>").append("</br>");
         }
         if(Objects.nonNull(booking.getSpecialRequest())){
@@ -63,7 +67,12 @@ public class EmailService {
         }
                 content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>");
+        if(Objects.nonNull(roomNumbers)) {
+            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
+        }
+        content.append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
+                .append("<p><strong>No. of childrens:</strong> ").append(booking.getNoOfChildrens()).append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
                 .append("<p>We can’t wait to welcome you</p>").append("</br>")
@@ -91,6 +100,10 @@ public class EmailService {
         String email = booking.getHotel().getEmail();
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
 
+        String roomNumbers = null;
+        if(!booking.getBookedRooms().isEmpty()){
+            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
+        }
 
         // Construct the email body
         StringBuilder content =  new StringBuilder();
@@ -101,7 +114,7 @@ public class EmailService {
                 .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
 
         if(Objects.nonNull(payment)){
-            content.append("<p>Amount paid: <strong>₹").append(payment.getAmount()).append("</br>")
+            content.append("<p><strong>Amount paid: </strong>₹").append(payment.getAmount()).append("</p></br>")
                     .append("<p><strong>Payment ID:</strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
                     .append("</br>").append("</br>");
         }
@@ -110,7 +123,12 @@ public class EmailService {
         }
         content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
-                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>")
+                .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>");
+        if(Objects.nonNull(roomNumbers)) {
+            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
+        }
+        content.append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
+                .append("<p><strong>No. of childrens:</strong> ").append(booking.getNoOfChildrens()).append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
                 .append("<p>We can’t wait to welcome you</p>").append("</br>")
@@ -127,7 +145,6 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            //            String tempEmail = "waqarmohd99@gmail.com";
             String tempEmail = toEmail;
             helper.setTo(tempEmail);
             helper.setSubject(subject);
@@ -144,7 +161,6 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-//            String tempEmail = "waqarmohd99@gmail.com";
             String tempEmail = email;
             helper.setTo(tempEmail);
             helper.setSubject("Booking request from "+name);

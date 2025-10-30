@@ -194,7 +194,7 @@ public class BookingService {
                 .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
                 .checkInDate(guestBookingRequestDto.getCheckInDate())
                 .checkOutDate(guestBookingRequestDto.getCheckOutDate())
-                .paymentType(PaymentType.PREPAID)
+                .paymentType(guestBookingRequestDto.getPaymentType())
                 .totalAmount(guestBookingRequestDto.getTotalAmount())
                 .payableAmount(guestBookingRequestDto.getPayableAmount())
                 .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
@@ -472,5 +472,10 @@ public class BookingService {
             return newPayment;
         }
         return null;
+    }
+
+    public void removeBookingsByUserId(Long userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        bookingRepository.deleteAll(bookings);
     }
 }
