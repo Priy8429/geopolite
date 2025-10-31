@@ -164,7 +164,7 @@ public class BookingService {
         return savedBooking;
     }
 
-    public String createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
+    public Booking createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
         User user = null;
 
         Optional<User> userByEmail = authService.findByEmail(guestBookingRequestDto.getEmail());
@@ -201,7 +201,7 @@ public class BookingService {
                 .build();
         Booking booking = this.createBooking(bookingDto);
 //        this.reserveRooms(booking);
-        return paymentService.createOrder(booking.getBookingNumber());
+        return booking;
     }
 
     public BookingResponseDto createBookingForOfflineGuest(GuestBookingRequestDto guestBookingRequestDto) {
