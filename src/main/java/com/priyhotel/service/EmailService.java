@@ -47,10 +47,10 @@ public class EmailService {
         User user = booking.getUser();
         String email = user.getEmail();
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
-        String roomNumbers = null;
-        if(!booking.getBookedRooms().isEmpty()){
-            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
-        }
+//        String roomNumbers = null;
+//        if(!booking.getBookedRooms().isEmpty()){
+//            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
+//        }
         StringBuilder content =  new StringBuilder();
         content.append("<p>Hi ").append(user.getName()).append("</p></br></br>")
                 .append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
@@ -68,10 +68,11 @@ public class EmailService {
                 content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>");
-        if(Objects.nonNull(roomNumbers)) {
-            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
-        }
-        content.append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
+//        if(Objects.nonNull(roomNumbers)) {
+//            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
+//        }
+        content.append("<p><strong>No. of rooms:</strong> ").append(booking.getTotalRooms()).append("</p>").append("</br>")
+                .append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
                 .append("<p><strong>No. of childrens:</strong> ").append(booking.getNoOfChildrens()).append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
@@ -100,10 +101,10 @@ public class EmailService {
         String email = booking.getHotel().getEmail();
         String subject = "🛎️ Your Booking at Hotel Pride is Confirmed!";
 
-        String roomNumbers = null;
-        if(!booking.getBookedRooms().isEmpty()){
-            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
-        }
+//        String roomNumbers = null;
+//        if(!booking.getBookedRooms().isEmpty()){
+//            roomNumbers = booking.getBookedRooms().stream().map(rb -> rb.getRoom().getRoomNumber()).collect(Collectors.joining(","));
+//        }
 
         // Construct the email body
         StringBuilder content =  new StringBuilder();
@@ -124,10 +125,11 @@ public class EmailService {
         content.append("<p><strong>Status: </strong> ").append(booking.getStatus()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-in:</strong> ").append(booking.getCheckInDate().format(dateFormatter)).append(" 12:00 PM").append("</p>").append("</br>")
                 .append("<p><strong>\uD83D\uDDD3\uFE0F Check-out:</strong> ").append(booking.getCheckOutDate().format(dateFormatter)).append(" 11:00 AM").append("</p>").append("</br>");
-        if(Objects.nonNull(roomNumbers)) {
-            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
-        }
-        content.append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
+//        if(Objects.nonNull(roomNumbers)) {
+//            content.append("<p><strong>Room(s):</strong> ").append(roomNumbers).append("</p>").append("</br>");
+//        }
+        content.append("<p><strong>No. of rooms:</strong> ").append(booking.getTotalRooms()).append("</p>").append("</br>")
+                .append("<p><strong>No. of adults:</strong> ").append(booking.getNoOfAdults()).append("</p>").append("</br>")
                 .append("<p><strong>No. of childrens:</strong> ").append(booking.getNoOfChildrens()).append("</p>").append("</br>")
                 .append("<p>If you have any special requests or need assistance before your arrival, feel free to reply to this email or call us directly.</p>")
                 .append("</br>").append("</br>")
