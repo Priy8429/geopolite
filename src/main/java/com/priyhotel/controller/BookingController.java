@@ -75,6 +75,20 @@ public class BookingController {
         }
     }
 
+    @PostMapping("/event")
+    public ResponseEntity<?> createEventBooking(@RequestBody EventBookingRequestDto bookingRequestDto) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingMapper.toResponseDto(bookingService.createEventBooking(bookingRequestDto)));
+        }catch(Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingResponseDto>> getUserBookings(@PathVariable Long userId) {
         return ResponseEntity.ok(bookingService.getUserBookings(userId));

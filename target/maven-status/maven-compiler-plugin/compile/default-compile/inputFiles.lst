@@ -5,6 +5,7 @@ C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\jav
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\AssetType.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\BookingSource.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\BookingStatus.java
+C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\BookingType.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\Constants.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\PaymentStatus.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\constants\PaymentType.java
@@ -27,6 +28,7 @@ C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\jav
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\BookingRequestQueryDto.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\BookingResponseDto.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\DefaultErrorResponse.java
+C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\EventBookingRequestDto.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\GuestBookingRequestDto.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\HotelRequestDto.java
 C:\Users\mohammadansari01\Desktop\practice code\priyhotel\priyhotel\src\main\java\com\priyhotel\dto\LoginRequest.java

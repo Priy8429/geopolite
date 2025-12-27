@@ -12,6 +12,7 @@ import com.priyhotel.repository.RoomBookingRepository;
 import com.priyhotel.repository.RoomBookingRequestRepository;
 import com.razorpay.RazorpayException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
@@ -85,13 +86,21 @@ public class BookingService {
 //        List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotel.getId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
 
 //        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto.getHotelId(), bookingRequestDto.getRoomBookingList(), alreadyBookedRoomNumbers);
-
-        List<Room> availableRooms = this.getAvailableRooms(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList());
-        int requestedRoomsQty = bookingRequestDto.getRoomBookingList().stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
-
-        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
-            throw new BadRequestException("Room/s not available!");
+        if(bookingRequestDto.getBookingType() == null){
+            bookingRequestDto.setBookingType(BookingType.REGULAR);
+        }else{
+            bookingRequestDto.setBookingType(bookingRequestDto.getBookingType());
         }
+
+        List<Room> availableRooms = this.checkForRoomAvailability(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList(), bookingRequestDto.getBookingType());
+
+
+//        List<Room> availableRooms = this.getAvailableRooms(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList());
+//        int requestedRoomsQty = bookingRequestDto.getRoomBookingList().stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
+//
+//        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
+//            throw new BadRequestException("Room/s not available!");
+//        }
 
 //        double totalAmount = (bookingRequestDto.getCheckOutDate().toEpochDay() - bookingRequestDto.getCheckInDate().toEpochDay())
 //                * availableRooms.stream().mapToDouble(item -> item.getRoomType().getPricePerNight()).sum();
@@ -124,6 +133,7 @@ public class BookingService {
         booking.setCheckOutDate(bookingRequestDto.getCheckOutDate());
         booking.setTotalAmount(bookingRequestDto.getTotalAmount());
         booking.setPayableAmount(bookingRequestDto.getPayableAmount());
+        booking.setBookingType(bookingRequestDto.getBookingType());
         booking.setStatus(BookingStatus.PENDING);
 
         if(Objects.isNull(bookingRequestDto.getBookingSource())){
@@ -151,6 +161,11 @@ public class BookingService {
             savedBooking.setBookedRooms(roomBookings);
             saveBookedRooms(roomBookings);
         }
+
+        if(bookingRequestDto.getBookingType().equals(BookingType.EVENT)){
+            booking.setStatus(BookingStatus.CONFIRMED);
+        }
+
         savedBooking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(savedBooking);
 
@@ -243,6 +258,22 @@ public class BookingService {
         Booking booking = this.createBooking(bookingDto);
 //        this.reserveRooms(booking);
         return bookingMapper.toResponseDto(booking);
+    }
+
+    public List<Room> checkForRoomAvailability(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate, List<RoomBookingDto> roomBookingDtos, BookingType bookingType) {
+        List<Booking> existingEventBookings = roomService.findIfBookedForEventBooking(hotelId, checkinDate, checkoutDate);
+        if(!existingEventBookings.isEmpty()){
+            throw new BadRequestException("Rooms booked for event!");
+        }else if(bookingType.equals(BookingType.EVENT)){
+            return new ArrayList<>();
+        }
+        List<Room> availableRooms = this.getAvailableRooms(hotelId, checkinDate, checkoutDate, roomBookingDtos);
+        int requestedRoomsQty = roomBookingDtos.stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
+
+        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
+            throw new BadRequestException("Room/s not available!");
+        }
+        return availableRooms;
     }
 
     public List<RoomBooking> bookRooms(List<Room> availableRooms, Booking booking){
@@ -477,5 +508,32 @@ public class BookingService {
     public void removeBookingsByUserId(Long userId) {
         List<Booking> bookings = bookingRepository.findByUserId(userId);
         bookingRepository.deleteAll(bookings);
+    }
+
+    public Booking createEventBooking(EventBookingRequestDto bookingRequestDto) {
+        Optional<User> userByEmail = authService.findByEmail(bookingRequestDto.getUserEmail());
+        Optional<User> userByContactNumber = authService.findByPhoneNumber(bookingRequestDto.getUserPhoneNumber());
+        User user = null;
+        if(userByContactNumber.isPresent()){
+            user = userByContactNumber.get();
+        }
+
+        if(userByEmail.isPresent()){
+            user = userByEmail.get();
+        }
+
+        if(userByEmail.isEmpty() && userByContactNumber.isEmpty()){
+            UserRequestDto guestUser = UserRequestDto.builder()
+                    .name(bookingRequestDto.getUserFullName())
+                    .email(bookingRequestDto.getUserEmail())
+                    .contactNumber(bookingRequestDto.getUserPhoneNumber())
+                    .role(Role.GUEST).build();
+            user = authService.register(guestUser);
+        }
+        BookingRequestDto newBookingRequestDto = new BookingRequestDto();
+        BeanUtils.copyProperties(bookingRequestDto, newBookingRequestDto);
+        newBookingRequestDto.setUserId(user.getId());
+        newBookingRequestDto.setBookingType(BookingType.EVENT);
+        return this.createBooking(newBookingRequestDto);
     }
 }

@@ -16,6 +16,7 @@ com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
 com\priyhotel\controller\ForwardController.class
 com\priyhotel\mapper\HotelMapper.class
+com\priyhotel\constants\BookingType.class
 com\priyhotel\dto\PasswordResetDto.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
@@ -27,9 +28,11 @@ com\priyhotel\repository\RoomTypeRepository.class
 com\priyhotel\dto\UpdateCheckoutRequestDto$UpdateCheckoutRequestDtoBuilder.class
 com\priyhotel\dto\OffersUpdateDto.class
 com\priyhotel\exception\InternalServerError.class
+com\priyhotel\dto\EventBookingRequestDto$EventBookingRequestDtoBuilder.class
 com\priyhotel\dto\OffersUpdateDto$OffersUpdateDtoBuilder.class
 com\priyhotel\constants\BookingStatus.class
 com\priyhotel\controller\CouponController.class
+com\priyhotel\dto\EventBookingRequestDto.class
 com\priyhotel\entity\RoomType.class
 com\priyhotel\service\RoomBookingService.class
 com\priyhotel\entity\Audit.class

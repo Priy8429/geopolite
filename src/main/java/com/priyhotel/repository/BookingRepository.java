@@ -69,4 +69,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> getBookingsByStatusInAndHotelId(List<BookingStatus> bookingStatuses, Long hotelId, Pageable pageable);
 
     Booking findByBookingNumber(String bookingId);
+
+    boolean existsByHotelIdAndBookingTypeAndCheckInDateLessThanEqualAndCheckOutDateGreaterThanEqual(Long hotelId, String event, LocalDate checkoutDate, LocalDate checkinDate);
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.hotel.id = :hotelId " +
+            "AND (b.checkInDate <= :endDate AND b.checkOutDate >= :startDate)" +
+            "AND b.bookingType = 'EVENT' ORDER BY b.checkInDate ASC")
+    List<Booking> findEventBookings(Long hotelId, LocalDate startDate, LocalDate endDate);
 }

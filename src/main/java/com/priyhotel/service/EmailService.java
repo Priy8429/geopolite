@@ -1,5 +1,6 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.BookingType;
 import com.priyhotel.dto.BookingRequestQueryDto;
 import com.priyhotel.entity.Booking;
 import com.priyhotel.entity.Payment;
@@ -55,8 +56,12 @@ public class EmailService {
         content.append("<p>Hi ").append(user.getName()).append("</p></br></br>")
                 .append("<p>Thank you for choosing Hotel Pride for your upcoming stay in Mumbai! We're delighted to have the opportunity to host you.</p>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
+        if(booking.getBookingType().equals(BookingType.EVENT)){
+            content.append("<p><strong>Room type:</strong> ").append("EVENT BOOKING").append("</p>").append("</br>").append("</br>");
+        }else{
+            content.append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
+        }
         if(Objects.nonNull(payment)){
             content.append("<p><strong>Amount paid: </strong>₹").append(payment.getAmount()).append("</p></br>")
                     .append("<p><strong>Payment ID: </strong> ").append(payment.getRazorpayPaymentId()).append("</p>")
@@ -111,8 +116,13 @@ public class EmailService {
         content.append("<p>Customer booking confirmed!").append(booking.getUser().getName()).append("</p></br>")
                 .append("<p><strong>Customer Name:</strong> ").append(booking.getUser().getName()).append("</p>").append("</br>").append("</br>")
                 .append("<p><strong>Booking ID:</strong> ").append(booking.getBookingNumber()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>")
-                .append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
+                .append("<p><strong>Payment mode:</strong> ").append(booking.getPaymentType()).append("</p>").append("</br>").append("</br>");
+
+        if(booking.getBookingType().equals(BookingType.EVENT)){
+            content.append("<p><strong>Room type:</strong> ").append("EVENT BOOKING").append("</p>").append("</br>").append("</br>");
+        }else{
+            content.append("<p><strong>Room type:</strong> ").append(booking.getBookedRooms().get(0).getRoom().getRoomType().getTypeName()).append("</p>").append("</br>").append("</br>");
+        }
 
         if(Objects.nonNull(payment)){
             content.append("<p><strong>Amount paid: </strong>₹").append(payment.getAmount()).append("</p></br>")

@@ -3,6 +3,7 @@ package com.priyhotel.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.BookingStatus;
+import com.priyhotel.constants.BookingType;
 import com.priyhotel.constants.PaymentType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -80,6 +81,10 @@ public class Booking extends Audit {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status; // CONFIRMED, CANCELLED, PENDING
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private BookingType bookingType; // REGULAR, EVENT
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments = new ArrayList<>();
