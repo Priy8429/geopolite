@@ -1,6 +1,6 @@
 package com.priyhotel.mapper;
 
-import com.priyhotel.dto.RoomTypeAvailabilityResponse;
+import com.priyhotel.dto.RoomTypeAvailabilityDto;
 import com.priyhotel.dto.RoomTypeDto;
 import com.priyhotel.dto.RoomTypeRequestDto;
 import com.priyhotel.entity.Amenity;
@@ -44,8 +44,8 @@ public class RoomTypeMapper {
         return roomTypes.stream().map(this::toDto).toList();
     }
 
-    public RoomTypeAvailabilityResponse toRTAvailabilityResponse(RoomType roomType){
-        return RoomTypeAvailabilityResponse.builder()
+    public RoomTypeAvailabilityDto toRTAvailabilityResponse(RoomType roomType){
+        return RoomTypeAvailabilityDto.builder()
                 .id(roomType.getId())
                 .typeName(roomType.getTypeName())
                 .capacityAdult(roomType.getCapacityAdult())
@@ -61,7 +61,7 @@ public class RoomTypeMapper {
                 .build();
     }
 
-    public List<RoomTypeAvailabilityResponse> toRTAvailabilityDtos(List<RoomType> roomTypes){
+    public List<RoomTypeAvailabilityDto> toRTAvailabilityDtos(List<RoomType> roomTypes){
         return roomTypes.stream().map(this::toRTAvailabilityResponse).toList();
     }
 }

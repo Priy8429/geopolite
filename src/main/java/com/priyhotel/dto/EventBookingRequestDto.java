@@ -20,15 +20,6 @@ public class EventBookingRequestDto {
     private String userEmail;
     private String userPhoneNumber;
     private Long hotelId;
-    private String couponCode;
-    private Integer noOfAdults;
-    private Integer noOfChildrens;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
-    private PaymentType paymentType;
-    private Double totalAmount;
-    private Double payableAmount;
-    private BookingSource bookingSource;
-    private String specialRequest;
-    private List<RoomBookingDto> roomBookingList;
 }

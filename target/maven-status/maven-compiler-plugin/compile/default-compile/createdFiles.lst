@@ -3,6 +3,7 @@ com\priyhotel\service\AmenityService.class
 com\priyhotel\entity\RoomBookingRequest.class
 com\priyhotel\entity\Payment.class
 com\priyhotel\entity\Refund.class
+com\priyhotel\dto\RoomTypeAvailabilityDto.class
 com\priyhotel\config\DateFormatConfig.class
 com\priyhotel\dto\OtpEntry.class
 com\priyhotel\repository\RoomBookingRequestRepository.class
@@ -18,6 +19,7 @@ com\priyhotel\controller\ForwardController.class
 com\priyhotel\mapper\HotelMapper.class
 com\priyhotel\constants\BookingType.class
 com\priyhotel\dto\PasswordResetDto.class
+com\priyhotel\dto\RoomTypeAvailabilityDto$RoomTypeAvailabilityDtoBuilder.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
 com\priyhotel\dto\UpdateCheckoutRequestDto.class

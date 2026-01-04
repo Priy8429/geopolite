@@ -389,15 +389,32 @@ public class BookingService {
         return "Your request has been sent successfully!";
     }
 
-    public List<RoomTypeAvailabilityResponse> getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
+    public RoomTypeAvailabilityResponse getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
         List<RoomType> roomTypes = hotelService.getHotelById(hotelId).getRoomTypes();
-        List<RoomTypeAvailabilityResponse> rtDtos = roomTypeMapper.toRTAvailabilityDtos(roomTypes);
+        List<RoomTypeAvailabilityDto> rtDtos = roomTypeMapper.toRTAvailabilityDtos(roomTypes);
+        RoomTypeAvailabilityResponse response = new RoomTypeAvailabilityResponse();
+//        check if there are any event bookings
+        List<Booking> eventBookings = bookingRepository.findEventBookings(hotelId, checkinDate, checkoutDate);
+
+        if(!eventBookings.isEmpty()){
+            response.setEventBookings(bookingMapper
+                    .toResponseDtos(eventBookings));
+            rtDtos.forEach(roomType -> {
+                roomType.setAvailableRoomsQty(0L);
+            });
+            response.setRoomTypeAvailabilities(rtDtos);
+            return response;
+        }
+
         List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
         Map<String, Long> roomsMap = roomService.findAvailableRoomsCountForRoomTypes(hotelId, alreadyBookedRoomNumbers);
         rtDtos.forEach(roomType -> {
             roomType.setAvailableRoomsQty(roomsMap.getOrDefault(roomType.getTypeName(), 0L));
         });
-        return rtDtos;
+
+        response.setRoomTypeAvailabilities(rtDtos);
+        response.setEventBookings(new ArrayList<>());
+        return response;
     }
 
     public List<BookingResponseDto> getUserCheckinsByDate(LocalDate checkinDate) {
@@ -532,6 +549,13 @@ public class BookingService {
         }
         BookingRequestDto newBookingRequestDto = new BookingRequestDto();
         BeanUtils.copyProperties(bookingRequestDto, newBookingRequestDto);
+        newBookingRequestDto.setNoOfAdults(0);
+        newBookingRequestDto.setNoOfChildrens(0);
+        newBookingRequestDto.setRoomBookingList(new ArrayList<>());
+        newBookingRequestDto.setTotalAmount(0.0);
+        newBookingRequestDto.setPayableAmount(0.0);
+        newBookingRequestDto.setPaymentType(PaymentType.POSTPAID);
+        newBookingRequestDto.setBookingSource(BookingSource.OWN);
         newBookingRequestDto.setUserId(user.getId());
         newBookingRequestDto.setBookingType(BookingType.EVENT);
         return this.createBooking(newBookingRequestDto);
