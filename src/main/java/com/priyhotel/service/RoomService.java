@@ -1,5 +1,6 @@
 package com.priyhotel.service;
 
+import com.priyhotel.constants.BookingType;
 import com.priyhotel.dto.BookingRequestDto;
 import com.priyhotel.dto.RoomBookingDto;
 import com.priyhotel.dto.RoomRequestDto;
@@ -130,4 +131,9 @@ public class RoomService {
         return roomTypeCounts;
     }
 
+    public List<Booking> findIfBookedForEventBooking(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
+        return bookingRepository.findEventBookings(
+                hotelId, checkinDate, checkoutDate
+        );
+    }
 }

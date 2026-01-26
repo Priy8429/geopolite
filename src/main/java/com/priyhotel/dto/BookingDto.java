@@ -1,6 +1,7 @@
 package com.priyhotel.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.priyhotel.constants.BookingSource;
 import com.priyhotel.constants.BookingStatus;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.entity.RoomBooking;
@@ -29,7 +30,7 @@ public class BookingDto {
     private Integer noOfAdults;
     private Integer noOfChildrens;
     private List<RoomBooking> bookedRooms;
-    private String bookingSource;
+    private BookingSource bookingSource;
     private String specialRequest;
     private PaymentType paymentType; // PREPAID, POSTPAID, PARTIALLY_PAID
     private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED

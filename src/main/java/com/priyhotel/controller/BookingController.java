@@ -3,6 +3,7 @@ package com.priyhotel.controller;
 import com.priyhotel.constants.PaymentType;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.Booking;
+import com.priyhotel.entity.Payment;
 import com.priyhotel.entity.Room;
 import com.priyhotel.mapper.BookingMapper;
 import com.priyhotel.service.BookingService;
@@ -51,6 +52,34 @@ public class BookingController {
         try{
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(bookingService.createBookingForGuest(bookingRequestDto));
+        }catch(Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+    }
+
+    @PostMapping("/offline")
+    public ResponseEntity<?> createBookingForOfflineGuest(@RequestBody GuestBookingRequestDto bookingRequestDto) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingService.createBookingForOfflineGuest(bookingRequestDto));
+        }catch(Exception ex){
+            logger.error("Some error occurred: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(ex.getMessage())
+                    .build());
+        }
+    }
+
+    @PostMapping("/event")
+    public ResponseEntity<?> createEventBooking(@RequestBody EventBookingRequestDto bookingRequestDto) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingMapper.toResponseDto(bookingService.createEventBooking(bookingRequestDto)));
         }catch(Exception ex){
             logger.error("Some error occurred: {}", ex.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(DefaultErrorResponse.builder()
@@ -124,20 +153,26 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getOnwardBookings(hotelId, pageNumber, pageSize));
     }
 
-    @PatchMapping("/{bookingNumber}/update-checkout")
-    public ResponseEntity<?> updateCheckoutDate(@PathVariable String bookingNumber, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate newCheckoutDate){
-        return ResponseEntity.ok(bookingService.updateCheckoutDate(bookingNumber, newCheckoutDate));
+    @PatchMapping("/update-checkout")
+    public ResponseEntity<?> updateCheckoutDate(@RequestBody UpdateCheckoutRequestDto requestDto){
+        return ResponseEntity.ok(bookingService.updateCheckout(requestDto));
     }
 
     @PostMapping("/{bookingNumber}/payment/update-status/offline")
     public ResponseEntity<?> updateBookingPaymentStatusForOfflinePayment(@PathVariable String bookingNumber){
-        BookingDto bookingDto = bookingService.updateStatusForOfflinePayment(bookingNumber);
-        if(bookingDto != null){
-            return ResponseEntity.ok("Payment saved successfully!");
+        Payment payment = bookingService.updateStatusForOfflinePayment(bookingNumber);
+        if(payment != null){
+            return ResponseEntity.ok(payment);
         }else{
             return ResponseEntity.ok("Issue in saving payment!");
         }
 
+    }
+
+    @DeleteMapping("/delete-user-bookings/{userId}")
+    public ResponseEntity<?> deleteAllBookingsByUser(@PathVariable Long userId){
+        bookingService.removeBookingsByUserId(userId);
+        return ResponseEntity.ok("User bookings deleted successfully!");
     }
 
 }

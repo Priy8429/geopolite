@@ -175,4 +175,5 @@ public class AuthService {
             throw new ResourceNotFoundException("User with this email does not exist!");
         }
     }
+
 }

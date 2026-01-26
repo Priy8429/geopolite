@@ -1,9 +1,6 @@
 package com.priyhotel.service;
 
-import com.priyhotel.constants.PaymentStatus;
-import com.priyhotel.constants.PaymentType;
-import com.priyhotel.constants.BookingStatus;
-import com.priyhotel.constants.Role;
+import com.priyhotel.constants.*;
 import com.priyhotel.dto.*;
 import com.priyhotel.entity.*;
 import com.priyhotel.exception.BadRequestException;
@@ -15,6 +12,7 @@ import com.priyhotel.repository.RoomBookingRepository;
 import com.priyhotel.repository.RoomBookingRequestRepository;
 import com.razorpay.RazorpayException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
@@ -88,13 +86,21 @@ public class BookingService {
 //        List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotel.getId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
 
 //        List<Room> availableRooms = roomService.findAvailableRoomsForRoomTypes(bookingRequestDto.getHotelId(), bookingRequestDto.getRoomBookingList(), alreadyBookedRoomNumbers);
-
-        List<Room> availableRooms = this.getAvailableRooms(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList());
-        int requestedRoomsQty = bookingRequestDto.getRoomBookingList().stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
-
-        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
-            throw new BadRequestException("Room/s not available!");
+        if(bookingRequestDto.getBookingType() == null){
+            bookingRequestDto.setBookingType(BookingType.REGULAR);
+        }else{
+            bookingRequestDto.setBookingType(bookingRequestDto.getBookingType());
         }
+
+        List<Room> availableRooms = this.checkForRoomAvailability(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList(), bookingRequestDto.getBookingType());
+
+
+//        List<Room> availableRooms = this.getAvailableRooms(bookingRequestDto.getHotelId(), bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate(), bookingRequestDto.getRoomBookingList());
+//        int requestedRoomsQty = bookingRequestDto.getRoomBookingList().stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
+//
+//        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
+//            throw new BadRequestException("Room/s not available!");
+//        }
 
 //        double totalAmount = (bookingRequestDto.getCheckOutDate().toEpochDay() - bookingRequestDto.getCheckInDate().toEpochDay())
 //                * availableRooms.stream().mapToDouble(item -> item.getRoomType().getPricePerNight()).sum();
@@ -127,10 +133,13 @@ public class BookingService {
         booking.setCheckOutDate(bookingRequestDto.getCheckOutDate());
         booking.setTotalAmount(bookingRequestDto.getTotalAmount());
         booking.setPayableAmount(bookingRequestDto.getPayableAmount());
+        booking.setBookingType(bookingRequestDto.getBookingType());
         booking.setStatus(BookingStatus.PENDING);
 
         if(Objects.isNull(bookingRequestDto.getBookingSource())){
-            booking.setBookingSource("OWN");
+            booking.setBookingSource(BookingSource.OWN);
+        }else{
+            booking.setBookingSource(bookingRequestDto.getBookingSource());
         }
 
         if(Objects.isNull(bookingRequestDto.getPaymentType())){
@@ -147,11 +156,16 @@ public class BookingService {
         roomBookingRequestRepository.saveAll(roomBookingRequests);
 
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
-            booking.setStatus(BookingStatus.CONFIRMED);
+            savedBooking.setStatus(BookingStatus.CONFIRMED);
             List<RoomBooking> roomBookings = this.bookRooms(availableRooms, savedBooking);
-            booking.setBookedRooms(roomBookings);
+            savedBooking.setBookedRooms(roomBookings);
             saveBookedRooms(roomBookings);
         }
+
+        if(bookingRequestDto.getBookingType().equals(BookingType.EVENT)){
+            booking.setStatus(BookingStatus.CONFIRMED);
+        }
+
         savedBooking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(savedBooking);
 
@@ -165,7 +179,7 @@ public class BookingService {
         return savedBooking;
     }
 
-    public String createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
+    public Booking createBookingForGuest(GuestBookingRequestDto guestBookingRequestDto) throws RazorpayException {
         User user = null;
 
         Optional<User> userByEmail = authService.findByEmail(guestBookingRequestDto.getEmail());
@@ -195,14 +209,71 @@ public class BookingService {
                 .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
                 .checkInDate(guestBookingRequestDto.getCheckInDate())
                 .checkOutDate(guestBookingRequestDto.getCheckOutDate())
-                .paymentType(PaymentType.PREPAID)
+                .paymentType(guestBookingRequestDto.getPaymentType())
                 .totalAmount(guestBookingRequestDto.getTotalAmount())
                 .payableAmount(guestBookingRequestDto.getPayableAmount())
                 .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
                 .build();
         Booking booking = this.createBooking(bookingDto);
 //        this.reserveRooms(booking);
-        return paymentService.createOrder(booking.getBookingNumber());
+        return booking;
+    }
+
+    public BookingResponseDto createBookingForOfflineGuest(GuestBookingRequestDto guestBookingRequestDto) {
+        User user = null;
+
+        Optional<User> userByEmail = authService.findByEmail(guestBookingRequestDto.getEmail());
+        Optional<User> userByContactNumber = authService.findByPhoneNumber(guestBookingRequestDto.getPhone());
+        if(userByContactNumber.isPresent()){
+            user = userByContactNumber.get();
+        }
+
+        if(userByEmail.isPresent()){
+            user = userByEmail.get();
+        }
+
+        if(userByEmail.isEmpty() && userByContactNumber.isEmpty()){
+            UserRequestDto guestUser = UserRequestDto.builder()
+                    .name(guestBookingRequestDto.getFullName())
+                    .email(guestBookingRequestDto.getEmail())
+                    .contactNumber(guestBookingRequestDto.getPhone())
+                    .role(Role.GUEST).build();
+            user = authService.register(guestUser);
+        }
+
+        BookingRequestDto bookingDto = BookingRequestDto.builder()
+                .userId(user.getId()) // null if guest
+                .bookingSource(BookingSource.OFFLINE)
+                .hotelId(guestBookingRequestDto.getHotelId())
+                .couponCode(guestBookingRequestDto.getCouponCode())
+                .noOfAdults(guestBookingRequestDto.getNoOfAdults())
+                .noOfChildrens(guestBookingRequestDto.getNoOfChildrens())
+                .checkInDate(guestBookingRequestDto.getCheckInDate())
+                .checkOutDate(guestBookingRequestDto.getCheckOutDate())
+                .paymentType(PaymentType.POSTPAID)
+                .totalAmount(guestBookingRequestDto.getTotalAmount())
+                .payableAmount(guestBookingRequestDto.getPayableAmount())
+                .roomBookingList(guestBookingRequestDto.getRoomBookingList()) // List<RoomBookingDto>
+                .build();
+        Booking booking = this.createBooking(bookingDto);
+//        this.reserveRooms(booking);
+        return bookingMapper.toResponseDto(booking);
+    }
+
+    public List<Room> checkForRoomAvailability(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate, List<RoomBookingDto> roomBookingDtos, BookingType bookingType) {
+        List<Booking> existingEventBookings = roomService.findIfBookedForEventBooking(hotelId, checkinDate, checkoutDate);
+        if(!existingEventBookings.isEmpty()){
+            throw new BadRequestException("Rooms booked for event!");
+        }else if(bookingType.equals(BookingType.EVENT)){
+            return new ArrayList<>();
+        }
+        List<Room> availableRooms = this.getAvailableRooms(hotelId, checkinDate, checkoutDate, roomBookingDtos);
+        int requestedRoomsQty = roomBookingDtos.stream().mapToInt(RoomBookingDto::getNoOfRooms).sum();
+
+        if(availableRooms.isEmpty() || availableRooms.size() != requestedRoomsQty){
+            throw new BadRequestException("Room/s not available!");
+        }
+        return availableRooms;
     }
 
     public List<RoomBooking> bookRooms(List<Room> availableRooms, Booking booking){
@@ -267,7 +338,7 @@ public class BookingService {
             if(Objects.nonNull(refund)){
                 booking.setStatus(BookingStatus.CANCELLED);
             }
-        }else if(booking.getPaymentType().equals(PaymentType.PREPAID)){
+        }else if(booking.getPaymentType().equals(PaymentType.POSTPAID) || booking.getPaymentType().equals(PaymentType.OFFLINE)){
             booking.setStatus(BookingStatus.CANCELLED);
         }
 
@@ -318,15 +389,32 @@ public class BookingService {
         return "Your request has been sent successfully!";
     }
 
-    public List<RoomTypeAvailabilityResponse> getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
+    public RoomTypeAvailabilityResponse getAvailableRoomsByDate(Long hotelId, LocalDate checkinDate, LocalDate checkoutDate) {
         List<RoomType> roomTypes = hotelService.getHotelById(hotelId).getRoomTypes();
-        List<RoomTypeAvailabilityResponse> rtDtos = roomTypeMapper.toRTAvailabilityDtos(roomTypes);
+        List<RoomTypeAvailabilityDto> rtDtos = roomTypeMapper.toRTAvailabilityDtos(roomTypes);
+        RoomTypeAvailabilityResponse response = new RoomTypeAvailabilityResponse();
+//        check if there are any event bookings
+        List<Booking> eventBookings = bookingRepository.findEventBookings(hotelId, checkinDate, checkoutDate);
+
+        if(!eventBookings.isEmpty()){
+            response.setEventBookings(bookingMapper
+                    .toResponseDtos(eventBookings));
+            rtDtos.forEach(roomType -> {
+                roomType.setAvailableRoomsQty(0L);
+            });
+            response.setRoomTypeAvailabilities(rtDtos);
+            return response;
+        }
+
         List<String> alreadyBookedRoomNumbers = bookingRepository.findBookedRoomNumbers(hotelId, checkinDate, checkoutDate);
         Map<String, Long> roomsMap = roomService.findAvailableRoomsCountForRoomTypes(hotelId, alreadyBookedRoomNumbers);
         rtDtos.forEach(roomType -> {
             roomType.setAvailableRoomsQty(roomsMap.getOrDefault(roomType.getTypeName(), 0L));
         });
-        return rtDtos;
+
+        response.setRoomTypeAvailabilities(rtDtos);
+        response.setEventBookings(new ArrayList<>());
+        return response;
     }
 
     public List<BookingResponseDto> getUserCheckinsByDate(LocalDate checkinDate) {
@@ -371,9 +459,12 @@ public class BookingService {
         return bookingRepository.getBookingByBookingNumber(bookingNumber);
     }
 
-    public BookingResponseDto updateCheckoutDate(String bookingNumber, LocalDate newCheckoutDate) {
-        Booking booking = this.getBookingByBookingNumber(bookingNumber);
-        booking.setCheckOutDate(newCheckoutDate);
+    public BookingResponseDto updateCheckout(UpdateCheckoutRequestDto requestDto) {
+        Booking booking = this.getBookingByBookingNumber(requestDto.getBookingNumber());
+        booking.setCheckOutDate(requestDto.getNewCheckoutDate());
+        booking.setTotalAmount(requestDto.getNewBookingAmount());
+        booking.setPayableAmount(requestDto.getNewBookingAmount());
+
 //        booking.setUpdatedBy(booking.getUser().getId());
         booking.setUpdatedOn(LocalDate.now());
         bookingRepository.save(booking);
@@ -414,7 +505,7 @@ public class BookingService {
         this.saveBooking(booking);
     }
 
-    public BookingDto updateStatusForOfflinePayment(String bookingNumber) {
+    public Payment updateStatusForOfflinePayment(String bookingNumber) {
         Booking booking = getBookingByBookingNumber(bookingNumber);
         if(booking.getPaymentType().equals(PaymentType.POSTPAID)){
             booking.setPaymentType(PaymentType.OFFLINE);
@@ -426,8 +517,47 @@ public class BookingService {
             newPayment.setCreatedOn(LocalDate.now());
             paymentService.savePayment(newPayment);
             bookingRepository.save(booking);
-            return bookingMapper.toDto(booking);
+            return newPayment;
         }
         return null;
+    }
+
+    public void removeBookingsByUserId(Long userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        bookingRepository.deleteAll(bookings);
+    }
+
+    public Booking createEventBooking(EventBookingRequestDto bookingRequestDto) {
+        Optional<User> userByEmail = authService.findByEmail(bookingRequestDto.getUserEmail());
+        Optional<User> userByContactNumber = authService.findByPhoneNumber(bookingRequestDto.getUserPhoneNumber());
+        User user = null;
+        if(userByContactNumber.isPresent()){
+            user = userByContactNumber.get();
+        }
+
+        if(userByEmail.isPresent()){
+            user = userByEmail.get();
+        }
+
+        if(userByEmail.isEmpty() && userByContactNumber.isEmpty()){
+            UserRequestDto guestUser = UserRequestDto.builder()
+                    .name(bookingRequestDto.getUserFullName())
+                    .email(bookingRequestDto.getUserEmail())
+                    .contactNumber(bookingRequestDto.getUserPhoneNumber())
+                    .role(Role.GUEST).build();
+            user = authService.register(guestUser);
+        }
+        BookingRequestDto newBookingRequestDto = new BookingRequestDto();
+        BeanUtils.copyProperties(bookingRequestDto, newBookingRequestDto);
+        newBookingRequestDto.setNoOfAdults(0);
+        newBookingRequestDto.setNoOfChildrens(0);
+        newBookingRequestDto.setRoomBookingList(new ArrayList<>());
+        newBookingRequestDto.setTotalAmount(0.0);
+        newBookingRequestDto.setPayableAmount(0.0);
+        newBookingRequestDto.setPaymentType(PaymentType.POSTPAID);
+        newBookingRequestDto.setBookingSource(BookingSource.OWN);
+        newBookingRequestDto.setUserId(user.getId());
+        newBookingRequestDto.setBookingType(BookingType.EVENT);
+        return this.createBooking(newBookingRequestDto);
     }
 }

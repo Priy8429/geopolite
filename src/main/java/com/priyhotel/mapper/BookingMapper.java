@@ -1,12 +1,16 @@
 package com.priyhotel.mapper;
 
+import com.priyhotel.constants.PaymentStatus;
 import com.priyhotel.dto.BookingDto;
 import com.priyhotel.dto.BookingResponseDto;
 import com.priyhotel.entity.Booking;
+import com.priyhotel.entity.Payment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BookingMapper {
@@ -43,6 +47,7 @@ public class BookingMapper {
     }
 
     public BookingResponseDto toResponseDto(Booking booking){
+        Optional<Payment> paidPayment = booking.getPayments().stream().filter(p -> p.getStatus().equals(PaymentStatus.PAID)).findFirst();
         return BookingResponseDto.builder()
                 .bookingNumber(booking.getBookingNumber())
                 .user(userMapper.toDto(booking.getUser()))
@@ -58,6 +63,9 @@ public class BookingMapper {
                 .bookingSource(booking.getBookingSource())
                 .specialRequest(booking.getSpecialRequest())
                 .status(booking.getStatus())
+                .paymentStatus(paidPayment.map(Payment::getStatus).orElse(null))
+                .paymentAmount(paidPayment.map(Payment::getAmount).orElse(null))
+                .paymentDate(paidPayment.map(p -> LocalDate.from(p.getPaymentDate())).orElse(null))
                 .build();
     }
 

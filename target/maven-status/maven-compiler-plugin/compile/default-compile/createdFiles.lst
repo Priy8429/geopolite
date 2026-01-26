@@ -3,6 +3,7 @@ com\priyhotel\service\AmenityService.class
 com\priyhotel\entity\RoomBookingRequest.class
 com\priyhotel\entity\Payment.class
 com\priyhotel\entity\Refund.class
+com\priyhotel\dto\RoomTypeAvailabilityDto.class
 com\priyhotel\config\DateFormatConfig.class
 com\priyhotel\dto\OtpEntry.class
 com\priyhotel\repository\RoomBookingRequestRepository.class
@@ -16,18 +17,24 @@ com\priyhotel\repository\BookingRepository.class
 com\priyhotel\service\LocationService.class
 com\priyhotel\controller\ForwardController.class
 com\priyhotel\mapper\HotelMapper.class
+com\priyhotel\constants\BookingType.class
 com\priyhotel\dto\PasswordResetDto.class
+com\priyhotel\dto\RoomTypeAvailabilityDto$RoomTypeAvailabilityDtoBuilder.class
 com\priyhotel\service\HotelService.class
 com\priyhotel\entity\Asset.class
+com\priyhotel\dto\UpdateCheckoutRequestDto.class
 com\priyhotel\util\JwtUtil.class
 com\priyhotel\exception\UserAlreadyRegisteredException.class
 com\priyhotel\controller\UserController.class
 com\priyhotel\repository\RoomTypeRepository.class
+com\priyhotel\dto\UpdateCheckoutRequestDto$UpdateCheckoutRequestDtoBuilder.class
 com\priyhotel\dto\OffersUpdateDto.class
 com\priyhotel\exception\InternalServerError.class
+com\priyhotel\dto\EventBookingRequestDto$EventBookingRequestDtoBuilder.class
 com\priyhotel\dto\OffersUpdateDto$OffersUpdateDtoBuilder.class
 com\priyhotel\constants\BookingStatus.class
 com\priyhotel\controller\CouponController.class
+com\priyhotel\dto\EventBookingRequestDto.class
 com\priyhotel\entity\RoomType.class
 com\priyhotel\service\RoomBookingService.class
 com\priyhotel\entity\Audit.class
@@ -35,6 +42,7 @@ com\priyhotel\repository\RefundRepository.class
 com\priyhotel\repository\UserRepository.class
 com\priyhotel\repository\RoomRepository.class
 com\priyhotel\entity\Hotel.class
+com\priyhotel\dto\PaymentResponseDto.class
 com\priyhotel\dto\RoomBookingDto.class
 com\priyhotel\dto\BookingDto$BookingDtoBuilder.class
 com\priyhotel\entity\Room.class
@@ -63,6 +71,7 @@ com\priyhotel\repository\AmenityRepository.class
 com\priyhotel\controller\BookingController.class
 com\priyhotel\entity\Amenity.class
 com\priyhotel\service\BookingService.class
+com\priyhotel\dto\PaymentResponseDto$PaymentResponseDtoBuilder.class
 com\priyhotel\service\RoomTypeService.class
 com\priyhotel\repository\CouponRepository.class
 com\priyhotel\dto\RoomTypeDto$RoomTypeDtoBuilder.class
@@ -95,6 +104,7 @@ com\priyhotel\dto\RoomTypeRequestDto.class
 com\priyhotel\entity\Coupon.class
 com\priyhotel\service\RefundService.class
 com\priyhotel\repository\LocationRepository.class
+com\priyhotel\constants\BookingSource.class
 com\priyhotel\exception\GlobalExceptionHandler.class
 com\priyhotel\repository\ReviewRepository.class
 com\priyhotel\dto\RoomRequestDto.class
